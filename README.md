@@ -11,7 +11,7 @@ Jewelry Store System
 
 **Supervisors**:
 
-- Nguyễn Thị Thanh Truc - [Email](trucntt@uit.edu.vn)
+- Nguyễn Thị Thanh Trúc - [Email](trucntt@uit.edu.vn)
 
 **Description**:  
 
