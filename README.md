@@ -1,4 +1,4 @@
-# SE109-Group10-ProjectManagement
+# Group10 - Jewelry Store System
 ![UIT](https://img.shields.io/badge/from-UIT%20VNUHCM-blue?style=for-the-badge&link=https%3A%2F%2Fwww.uit.edu.vn%2F)
 
 Jewelry Store System
@@ -17,6 +17,19 @@ Jewelry Store System
 
 
 **How to use**: 
+1. Clone project:
+git clone https://github.com/khoapham1003/SE109-ProjectManagement.git
+2. cd SE109-ProjectManagement
+3. Install neccessary packages and run:
+  3.1 Backend
+   cd jewelrystore-backend
+npm install
+npm start
+Open localhost:3011 on web browser
+  3.2 Frontend 
+cd jewelrystore-frontend
+npm install
+npm start
 
 
 **Additional information**:
