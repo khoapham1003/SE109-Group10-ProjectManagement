@@ -1,6 +1,6 @@
 const User = require("../models/UserModel")
 const bcrypt = require("bcrypt")
-const { genneralAccessToken, genneralRefreshToken } = require("./JwtService")
+const { generalAccessToken, generalRefreshToken } = require("./JwtService")
 
 const createUser = (newUser) => {
     return new Promise(async (resolve, reject) => {
@@ -49,23 +49,21 @@ const loginUser = (userLogin) => {
                 })
             }
             const comparePassword = bcrypt.compareSync(password, checkUser.password)
-            console.log('comparePassword',comparePassword)
+
             if (!comparePassword) {
                 resolve({
                     status: 'ERR',
                     message: 'The password or user is incorrect'
                 })
             }
-            const access_token = await genneralAccessToken({
+            const access_token = await generalAccessToken({
                 id: checkUser.id,
                 isAdmin: checkUser.isAdmin
             })
-            console.log('access_token',access_token)
-            const refresh_token = await genneralRefreshToken({
+            const refresh_token = await generalRefreshToken({
                 id: checkUser.id,
                 isAdmin: checkUser.isAdmin
             })
-            console.log('refresh_token',refresh_token)
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
@@ -187,5 +185,5 @@ module.exports = {
     deleteUser,
     getAllUser,
     getDetailsUser,
-    deleteManyUser
+    deleteManyUser,
 }
