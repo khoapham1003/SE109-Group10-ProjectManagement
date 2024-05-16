@@ -1,11 +1,10 @@
 // api.js
 
-export const fetchProductData = async (jwtToken) => {
+export const fetchProductData = async () => {
   try {
-    const response = await fetch('https://localhost:7139/api/Product/public-getall', {
+    const response = await fetch('https://localhost:3001/api/product/get-all', {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwtToken}`,
       },
     });
 

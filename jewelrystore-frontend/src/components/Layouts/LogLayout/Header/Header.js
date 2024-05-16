@@ -1,5 +1,4 @@
 import classNames from "classnames/bind";
-import images from "../../../../assets/images";
 import logo from "../../../../assets/images/logo.jpg"
 import MenuSlide from "../../../MenuSlide";
 import SearchBar from "../../../SearchBar";
@@ -11,7 +10,6 @@ import { FaHome } from "react-icons/fa";
 
 const cx = classNames.bind();
 
-console.log(images.logo);
 function Header() {
   const navigate = useNavigate();
   return (

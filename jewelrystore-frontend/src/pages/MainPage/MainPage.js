@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { fetchProductData } from "../../components/Data/api";
 import { floatButtonPrefixCls } from "antd/es/float-button/FloatButton";
 import "./../styleMainPage.css";
-import background_log from "./../../assets/images/background_log.png";
 
 const { Meta } = Card;
 
@@ -31,7 +30,7 @@ function MainPage() {
     const fetchData = async () => {
       try {
         const jwtToken = getCookie("accessToken");
-        const data = await fetchProductData(jwtToken);
+        const data = await fetchProductData();
         setItems(data);
       } catch (error) {
         setError(error.message);
