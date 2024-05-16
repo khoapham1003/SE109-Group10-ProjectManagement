@@ -1,7 +1,6 @@
 import React from "react";
 import classNames from "classnames/bind";
 //picture
-import images from "../../../../assets/images";
 //icon
 import { CiLocationOn } from "react-icons/ci";
 import { FiPhone } from "react-icons/fi";
