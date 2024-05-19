@@ -2,7 +2,7 @@
 
 export const fetchProductData = async () => {
   try {
-    const response = await fetch('https://localhost:3001/api/product/get-all', {
+    const response = await fetch('http://localhost:3001/product/get-all', {
       headers: {
         'Content-Type': 'application/json',
       },
