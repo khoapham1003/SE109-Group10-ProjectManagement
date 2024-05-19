@@ -125,7 +125,7 @@ function ProductPage() {
                     {item.sProduct_author}
                   </span>
                 </List.Item>
-                <List.Item className="pp_rate">
+                {/* <List.Item className="pp_rate">
                   <span className="green rate_num">
                     {item.dProduct_start_count.toFixed(1)}
                   </span>
@@ -135,7 +135,7 @@ function ProductPage() {
                     allowHalf
                     defaultValue={item.dProduct_start_count}
                   />
-                </List.Item>
+                </List.Item> */}
                 <List.Item>
                   <span className="price">{item.vProduct_price}đ</span>
                 </List.Item>
@@ -200,21 +200,21 @@ function ProductPage() {
                 <Col>
                   <Row className="rate_proportion">
                     <span className="proportion_myrate green">
-                      {item.dProduct_start_count.toFixed(1)}
+                      {/* {item.dProduct_start_count.toFixed(1)} */}
                     </span>
                     <span className="proportion_allrate green">trên 5</span>
                   </Row>
                   <Row>
-                    <Rate
+                    {/* <Rate
                       className="green"
                       allowHalf
                       disabled
                       defaultValue={item.dProduct_start_count}
-                    />
+                    /> */}
                   </Row>
                 </Col>
                 <Col className="rate_filter">
-                  <Button
+                  {/* <Button
                     className="rate_filter_button"
                     onClick={() => setCurrentRatingFilter(null)}
                   >
@@ -249,11 +249,11 @@ function ProductPage() {
                     onClick={() => setCurrentRatingFilter(1)}
                   >
                     1 sao
-                  </Button>
+                  </Button> */}
                 </Col>
               </Row>
             </Row>
-            <Row>
+            {/* <Row>
               <List
                 className="user_review_list"
                 dataSource={reviewsdata.filter((review) =>
@@ -293,7 +293,7 @@ function ProductPage() {
                   </List.Item>
                 )}
               />
-            </Row>
+            </Row> */}
           </Col>
         </div>
       )}

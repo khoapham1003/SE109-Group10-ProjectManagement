@@ -31,7 +31,8 @@ function MainPage() {
       try {
         const jwtToken = getCookie("accessToken");
         const data = await fetchProductData();
-        setItems(data);
+        setItems(data.data);
+    console.log("Data:", items);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -76,13 +77,13 @@ function MainPage() {
         {items.map((item) => (
           <Card
             className="card_item"
-            key={item.sProduct_name}
+            key={item.name}
             hoverable
             bodyStyle={{ padding: "10px 24px" }}
             cover={
               <img
                 className="mp_book_item_image"
-                alt={item.sProduct_name}
+                alt={item.name}
                 
               />
             }
@@ -90,7 +91,7 @@ function MainPage() {
           >
             <div className="flex_column">
               <div className="title_start_container">
-                <span className="book_title">{item.sProduct_name}</span>
+                <span className="book_title">{item.name}</span>
                 <Rate
                   disabled
                   className="book_star"
@@ -98,7 +99,7 @@ function MainPage() {
                 />
               </div>
               <span className="book_price">
-                {item.vProduct_price}
+                {item.price}
                 <span
                   style={{
                     verticalAlign: "super",
