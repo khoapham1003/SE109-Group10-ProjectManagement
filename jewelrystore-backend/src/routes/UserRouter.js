@@ -14,4 +14,10 @@ router.get('/get-details/:id', authUserMiddleWare, userController.getDetailsUser
 router.post('/refresh-token', userController.refreshToken)
 router.post('/delete-many', authMiddleWare, userController.deleteMany)
 
+router.post("/cart-user/:id", authUserMiddleWare, userController.createUserCart);
+router.get("/get-cart-user/:id", userController.getUserCart);
+router.put("/update-cart-user/:id/:idProduct", authUserMiddleWare, userController.updateUserCart);
+router.delete("/delete-cart-user/:id/:idProduct", authUserMiddleWare, userController.deleteProductUserCart);
+router.delete("/delete-all-cart-user/:id", authUserMiddleWare, userController.deleteAllProductInCart);
+
 module.exports = router
