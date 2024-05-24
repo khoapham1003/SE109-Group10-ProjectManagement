@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const User = require("../models/UserModel");
 const Product = require("../models/ProductModel");
 const Cart = require("../models/CartModel");
+const Order = require("../models/OrderProduct");
 const { use } = require("../routes/UserRouter");
 
 const createUser = async (req, res) => {
@@ -434,6 +435,23 @@ const createUserCart = asyncHandler(async (req, res) => {
     }
   });
 
+  const getOrderHistory = asyncHandler(async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const orders = await Order.find({ user: userId }).sort({ createdAt: -1 }).exec();
+        
+        if (!orders) {
+            res.status(404).json({ message: 'No orders found for this user' });
+            return;
+        }
+
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+  });
+
 module.exports = {
     createUser,
     loginUser,
@@ -448,5 +466,7 @@ module.exports = {
     getUserCart,
     updateUserCart,
     deleteProductUserCart,
-    deleteAllProductInCart
+    deleteAllProductInCart,
+    getOrderHistory
+
 }
