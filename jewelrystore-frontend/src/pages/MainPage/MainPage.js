@@ -29,7 +29,6 @@ function MainPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const jwtToken = getCookie("accessToken");
         const data = await fetchProductData();
         setItems(data.data);
     console.log("Data:", items);

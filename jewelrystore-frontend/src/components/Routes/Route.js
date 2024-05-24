@@ -7,7 +7,6 @@ import { message } from "antd";
 function AppRoutes() {
   useEffect(() => {}, []);
 
-
   const getCookie = (cookieName) => {
     const cookies = document.cookie.split("; ");
     for (const cookie of cookies) {
@@ -20,25 +19,38 @@ function AppRoutes() {
   };
 
   const isUserAuthenticated = () => {
-    const accessToken = getCookie('accessToken');
-    const userid = getCookie('userid');
-  
-    if (accessToken && userid) {
+    const accessToken = getCookie("accessToken");
+    const refreshToken = getCookie("refreshToken");
+
+    if (accessToken && refreshToken) {
       try {
-        const decodedToken = JSON.parse(atob(accessToken.split('.')[1]));
-  
+        const tokenParts = accessToken.split(".");
+        if (tokenParts.length !== 3) {
+          throw new Error("Invalid token format");
+        }
+        const decodedToken = JSON.parse(atob(tokenParts[1]));
         if (decodedToken && decodedToken.exp) {
           const currentTimeInSeconds = Math.floor(Date.now() / 1000);
-          return decodedToken.exp > currentTimeInSeconds;
+          if (decodedToken.exp < currentTimeInSeconds) {
+            if (refreshToken) {
+              const decodedToken = JSON.parse(atob(accessToken.split(".")[1]));
+              if (decodedToken && decodedToken.exp) {
+                const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+                return decodedToken.exp < currentTimeInSeconds;
+              }
+            }
+            return false; 
+          }
+          return true;
         }
       } catch (error) {
-        console.error('Error decoding token:', error);
+        console.error("Error decoding token:", error);
       }
     }
-  
+
     return false;
   };
-  console.log('Is user authenticated:', isUserAuthenticated());
+  console.log("Is user authenticated:", isUserAuthenticated());
 
   return (
     <BrowserRouter>

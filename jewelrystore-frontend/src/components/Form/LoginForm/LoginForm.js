@@ -17,22 +17,18 @@ const Login = () => {
       const { username, password } = values;
 
       const requestBody = {
-        sUser_username: username,
-        sUser_password: password,
-        rememberme: true,
+        email: username,
+        password: password,
       };
 
-      const response = await fetch(
-        "https://localhost:7139/api/User/authenticate",
-        {
-          method: "POST",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+      const response = await fetch("http://localhost:3001/user/sign-in", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
 
       if (!response.ok) {
         const error = await response.text();
@@ -42,12 +38,17 @@ const Login = () => {
       } else {
         const responseData = await response.json();
         console.log(responseData);
-
-        document.cookie = `accessToken=${responseData.sUser_tokenL}; path=/`;
-        document.cookie = `userid=${responseData.gUser_id}; path=/`;
-        message.success("Đăng nhập thành công!");
-        navigate(`/`);
-        window.location.reload();
+        if (responseData.status == "ERR") {
+          message.error("Đăng nhập thất bại! Lỗi: " + responseData.message);
+          setError("Login failed. Please try again.");
+          console.error("Login failed", error);
+        } else {
+          document.cookie = `accessToken=${responseData.access_token}; path=/`;
+          document.cookie = `refreshToken=${responseData.refresh_token}; path=/`;
+          message.success("Đăng nhập thành công!");
+          navigate(`/`);
+          window.location.reload();
+        }
       }
     } catch (error) {
       setError("Login failed. Please try again.");
