@@ -192,44 +192,28 @@ const logoutUser = async (req, res) => {
 }
 
 const createUserCart = asyncHandler(async (req, res) => {
-    const cartItem = req.body; // Assuming req.body is a single cart item
-    const userId = req.params.id;
-  
-    try {
-      const user = await User.findById(userId);
-  
-      // Check if the user already has a cart
-      let existingCart = await Cart.findOne({ orderby: user?._id });
-  
-      if (existingCart) {
-        console.log("cartItem", cartItem);
-        // If the user has an existing cart, update it
-        const product = {
-          product: cartItem._id,
-          name: cartItem.name,
-          image: cartItem.image,
-          amount: cartItem.amount,
-          price: cartItem.price,
-        };
-  
-        const getPrice = await Product.findById(cartItem._id)
-          .select("price")
-          .exec();
-        product.price = getPrice.price;
-  
-        // Add the new product to the existing cart
-        existingCart.products.push(product);
-  
-        // Recalculate the cart total
-        existingCart.cartTotal = existingCart.products.reduce(
-          (total, product) => total + product.price * product.amount,
-          0
-        );
-  
-        await existingCart.save();
-        res.json(existingCart);
+  const cartItem = req.body; // Assuming req.body is a single cart item
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId);
+
+    // Check if the user already has a cart
+    let existingCart = await Cart.findOne({ orderby: user?._id });
+
+    if (existingCart) {
+      console.log("cartItem", cartItem);
+
+      // Find if the product already exists in the cart
+      const productIndex = existingCart.products.findIndex(
+        (p) => p.product.toString() === cartItem._id
+      );
+
+      if (productIndex > -1) {
+        // If product exists, update the quantity
+        existingCart.products[productIndex].amount += cartItem.amount;
       } else {
-        // If the user doesn't have an existing cart, create a new one
+        // If product does not exist, add it to the cart
         const product = {
           product: cartItem._id,
           name: cartItem.name,
@@ -237,27 +221,54 @@ const createUserCart = asyncHandler(async (req, res) => {
           amount: cartItem.amount,
           price: cartItem.price,
         };
-  
+
         const getPrice = await Product.findById(cartItem._id)
           .select("price")
           .exec();
         product.price = getPrice.price;
-  
-        const newCart = await new Cart({
-          products: [product],
-          cartTotal: product.price * product.amount,
-          orderby: user?._id,
-        }).save();
-  
-        user.cart = newCart._id;
-        await user.save();
-  
-        res.json(newCart);
+
+        existingCart.products.push(product);
       }
-    } catch (error) {
-      throw new Error(error);
+
+      // Recalculate the cart total
+      existingCart.cartTotal = existingCart.products.reduce(
+        (total, product) => total + product.price * product.amount,
+        0
+      );
+
+      await existingCart.save();
+      res.json(existingCart);
+    } else {
+      // If the user doesn't have an existing cart, create a new one
+      const product = {
+        product: cartItem._id,
+        name: cartItem.name,
+        image: cartItem.image,
+        amount: cartItem.amount,
+        price: cartItem.price,
+      };
+
+      const getPrice = await Product.findById(cartItem._id)
+        .select("price")
+        .exec();
+      product.price = getPrice.price;
+
+      const newCart = await new Cart({
+        products: [product],
+        cartTotal: product.price * product.amount,
+        orderby: user?._id,
+      }).save();
+
+      user.cart = newCart._id;
+      await user.save();
+
+      res.json(newCart);
     }
-  });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
   
   const getUserCart = asyncHandler(async (req, res) => {
     const _id = req.params.id;
