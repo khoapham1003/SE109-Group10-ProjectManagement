@@ -1,4 +1,9 @@
 const OrderService = require('../services/OrderService')
+const asyncHandler = require('express-async-handler');
+const Cart = require('../models/CartModel');
+const Product = require('../models/ProductModel');
+const Order = require('../models/OrderProduct');
+const User = require('../models/UserModel');
 
 const createOrder = async (req, res) => {
     try { 
@@ -88,11 +93,79 @@ const getAllOrder = async (req, res) => {
     }
 }
 
+const createOrderFromCart = asyncHandler(async (req, res) => {
+    const userId = req.params.userId;
+    const { selectedItems } = req.body; // Array of selected items with product ID and amount
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        const cart = await Cart.findOne({ orderby: user._id }).populate('products.product');
+        if (!cart) {
+            res.status(404).json({ message: 'Cart not found' });
+            return;
+        }
+
+        const orderItems = [];
+        let itemsPrice = 0;
+
+        for (let selectedItem of selectedItems) {
+            const cartItem = cart.products.find(p => p.product._id.toString() === selectedItem._id);
+            console.log('cartItem id', cartItem)
+            if (cartItem && cartItem.amount >= selectedItem.amount) {
+                const product = await Product.findById(cartItem.product._id);
+
+                if (product) {
+                    orderItems.push({
+                        name: product.name,
+                        amount: selectedItem.amount,
+                        image: product.image,
+                        price: product.price,
+                        product: product._id,
+                    });
+                    itemsPrice += product.price * selectedItem.amount;
+
+                    // Update product stock
+                    product.countInStock -= selectedItem.amount;
+                    await product.save();
+                }
+            } else {
+                res.status(400).json({ message: `Invalid item or insufficient quantity for product ID: ${selectedItem._id}` });
+                return;
+            }
+        }
+
+        const shippingPrice = 5.0; // For simplicity, fixed shipping price
+        const totalPrice = itemsPrice + shippingPrice;
+
+        const newOrder = new Order({
+            orderItems,
+            shippingAddress: req.body.shippingAddress,
+            paymentMethod: req.body.paymentMethod,
+            itemsPrice,
+            shippingPrice,
+            totalPrice,
+            user: user._id,
+            isPaid: false,
+        });
+
+        const createdOrder = await newOrder.save();
+        res.status(201).json(createdOrder);
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 module.exports = {
     createOrder,
     getAllOrderDetails,
     getDetailsOrder,
     cancelOrderDetails,
-    getAllOrder
+    getAllOrder,
+    createOrderFromCart
 }
