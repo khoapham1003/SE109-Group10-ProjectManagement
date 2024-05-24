@@ -12,7 +12,6 @@ export const fetchProductData = async () => {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    console.log("APTI lấy data product")
     console.log(response);
     const data = await response.json();
     return data;

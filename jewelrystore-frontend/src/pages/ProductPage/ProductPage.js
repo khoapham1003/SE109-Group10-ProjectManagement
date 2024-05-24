@@ -28,7 +28,7 @@ function ProductPage() {
     const fetchreviewsdata = async () => {
       try {
         const response = await fetch(
-          `https://localhost:7139/api/Review/getbyid?iProduct_id=${item.iProduct_id}`,
+          `http://localhost:3001/product/get-details/${item._id}`,
           {
             method: "GET",
             headers: {
@@ -42,7 +42,7 @@ function ProductPage() {
         }
         const data = await response.json();
         console.log(data);
-        setReviewsData(data);
+        setReviewsData(data.data);
 
         return data;
       } catch (error) {
@@ -64,35 +64,39 @@ function ProductPage() {
   };
   const jwtToken = getCookie("accessToken");
   const userId = getCookie("userid");
-
-  console.log(item);
-
+  console.log(jwtToken);
+  
   const handleAddToCart = async () => {
     setAmount(1); // Đặt lại số lượng sau khi thêm vào giỏ hàng
     try {
       const data = {
-        iProduct_id: item.iProduct_id,
-        iProduct_amount: amount,
+        _id: item._id,
+        name: item.name,
+        image: item.image,
+        amount: amount,
       };
-      console.log(data);
       const response = await fetch(
-        `https://localhost:7139/api/Cart/set?gUser_id=${userId}`,
+        `http://localhost:3001/user/cart-user/${userId}`,
         {
           method: "POST",
+          mode: "cors",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
+            token: `Bearer ${jwtToken}`,
           },
           body: JSON.stringify(data),
         }
       );
-      console.log(response);
+      console.log(data);
+
       if (response.ok) {
-        navigate(`/`);
+       // navigate(`/`);
         console.log("Item added to the cart in the database");
         message.success("Sản phẩm đã được thêm vào giỏ hàng!");
       } else {
         const error = await response.text();
+      console.log(error);
+
         if (error) {
           message.error(`${error}`);
         }
@@ -112,17 +116,17 @@ function ProductPage() {
             <Col md={5} offset={1} className="image_column">
               <Image
                 
-                alt={item.sProduct_name}
+                alt={item.name}
               />
             </Col>
             <Col md={14} offset={1} className="shortdetail_column">
               <List className="detail_list">
                 <List.Item>
-                  <h1>{item.sProduct_name}</h1>
+                  <h1>{item.name}</h1>
                   <span>
                     <br />
                     <br />
-                    {item.sProduct_author}
+                  {/* {item.sProduct_author} */}
                   </span>
                 </List.Item>
                 {/* <List.Item className="pp_rate">
@@ -137,7 +141,7 @@ function ProductPage() {
                   />
                 </List.Item> */}
                 <List.Item>
-                  <span className="price">{item.vProduct_price}đ</span>
+                  <span className="price">{item.price}đ</span>
                 </List.Item>
                 <List.Item className="pp_amount">
                   <span>Số lượng:</span>
@@ -186,7 +190,7 @@ function ProductPage() {
                   <h2>Mô tả sản phẩm</h2>
                 </List.Item>
                 <List.Item style={{ fontSize: "16px", color: "#8c8c8c" }}>
-                  {item.sProduct_description}
+                  {item.description}
                 </List.Item>
               </List>
             </Col>

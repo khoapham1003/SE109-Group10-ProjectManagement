@@ -21,15 +21,26 @@ import HistoryOrderPage from "../../pages/HistoryOrderPage";
 function DefineLayout() {
   const isUserAuthenticated = () => {
     const accessToken = getCookie("accessToken");
-    const userid = getCookie("userid");
+    const refreshToken = getCookie("refreshToken");
 
-    if (accessToken && userid) {
+    if (accessToken) {
       try {
         const decodedToken = JSON.parse(atob(accessToken.split(".")[1]));
-
+          console.log("decodedToken", decodedToken);
+          document.cookie = `userid=${decodedToken.id}; path=/`;
         if (decodedToken && decodedToken.exp) {
           const currentTimeInSeconds = Math.floor(Date.now() / 1000);
-          return decodedToken.exp > currentTimeInSeconds;
+          if (decodedToken.exp < currentTimeInSeconds) {
+            if (refreshToken) {
+              const decodedToken = JSON.parse(atob(accessToken.split(".")[1]));
+              if (decodedToken && decodedToken.exp) {
+                const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+                return decodedToken.exp < currentTimeInSeconds;
+              }
+            }
+            return false; // Token đã hết hạn và không có refreshToken
+          }
+          return true;
         }
       } catch (error) {
         console.error("Error decoding token:", error);

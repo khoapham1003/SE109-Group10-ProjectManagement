@@ -31,6 +31,8 @@ function CartPage() {
   };
   const userId = getCookie("userid");
   const jwtToken = getCookie("accessToken");
+  console.log(userId);
+  console.log(jwtToken);
 
   const fetchCartData = async () => {
     try {
@@ -40,20 +42,19 @@ function CartPage() {
       }
 
       const response = await fetch(
-        `https://localhost:7139/api/Cart/get/${userId}`,
+        `http://localhost:3001/user/get-cart-user/${userId}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
+            token: `Bearer ${jwtToken}`,
           },
         }
       );
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
       const data = await response.json();
       setItems(data);
     } catch (error) {
