@@ -48,13 +48,13 @@ function ProfilePage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const apiUrl = `https://localhost:7139/api/User/${userId}`;
+        const apiUrl = `http://localhost:3001/user/get-details/${userId}`;
 
         const response = await fetch(apiUrl, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
+            token: `Bearer ${jwtToken}`,
           },
         });
 
@@ -63,7 +63,9 @@ function ProfilePage() {
         }
 
         const data = await response.json();
-        setUserData(data);
+        setUserData(data.data);
+        console.log(userData);
+        
         setEditedData({
           sUser_phonenumber: data.sUser_phonenumber,
           dtUser_dob: data.dtUser_dob,
@@ -93,7 +95,7 @@ function ProfilePage() {
       };
       console.log(data);
       const response = await fetch(
-        `https://localhost:7139/api/User/updateinfor`,
+        `http://localhost:3001/user/update-user/${userId}`,
         {
           method: "POST",
           headers: {
@@ -234,11 +236,11 @@ function ProfilePage() {
     const fetchHistoryOrder = async () => {
       try {
         const response = await fetch(
-          `https://localhost:7139/api/Order/history?gUser_id=${userId}`,
+          `http://localhost:3001/order/get-all-order/${userId}`,
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${jwtToken}`,
+              token: `Bearer ${jwtToken}`,
             },
           }
         );
@@ -249,7 +251,7 @@ function ProfilePage() {
 
         const data = await response.json();
         console.log(data);
-        setItems(data);
+        setItems(data.data);
         return data;
       } catch (error) {
         console.error("Error fetching product data:", error);
@@ -277,16 +279,16 @@ function ProfilePage() {
           {userData && (
             <Descriptions className="description" column={1}>
               <Descriptions.Item label="Họ">
-                {userData.sUser_firstname}
+                {userData.name}
               </Descriptions.Item>
               <Descriptions.Item label="Tên">
-                {userData.sUser_lastname}
+                {userData.name}
               </Descriptions.Item>
               <Descriptions.Item label="Ngày sinh">
                 {isEditing ? (
                   <Input
                     placeholder="yyyy-mm-dd"
-                    value={editedData.dtUser_dob}
+                    value={editedData.birthday}
                     onChange={(e) =>
                       handleInputChange("dtUser_dob", e.target.value)
                     }
@@ -304,7 +306,7 @@ function ProfilePage() {
                     <Radio value="true">Nam</Radio>
                     <Radio value="false">Nữ</Radio>
                   </Radio.Group>
-                ) : userData.bUser_sex ? (
+                ) : userData.gender ? (
                   "Nam"
                 ) : (
                   "Nữ"
@@ -313,17 +315,17 @@ function ProfilePage() {
               <Descriptions.Item label="Số điện thoại">
                 {isEditing ? (
                   <Input
-                    value={editedData.sUser_phonenumber}
+                    value={editedData.phone}
                     onChange={(e) =>
                       handleInputChange("sUser_phonenumber", e.target.value)
                     }
                   />
                 ) : (
-                  userData.sUser_phonenumber || "N/A"
+                  userData.phone || "N/A"
                 )}
               </Descriptions.Item>
               <Descriptions.Item label="Email">
-                {userData.sUser_email}
+                {userData.email}
               </Descriptions.Item>
             </Descriptions>
           )}
