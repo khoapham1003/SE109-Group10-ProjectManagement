@@ -6,8 +6,8 @@ const PaymentRouter = require("./PaymentRouter")
 const routes = (app) => {
     app.use('/user', UserRouter)
     app.use('/product', ProductRouter)
-    app.use("/api/order", OrderRouter)
-  app.use("/api/payment", PaymentRouter)
+    app.use("/order", OrderRouter)
+  app.use("/payment", PaymentRouter)
 }
 
 module.exports = routes
