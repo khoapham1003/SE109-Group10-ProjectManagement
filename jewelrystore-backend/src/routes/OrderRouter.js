@@ -8,6 +8,7 @@ router.get('/get-all-order/:id',authUserMiddleWare, OrderController.getAllOrderD
 router.get('/get-details-order/:id', OrderController.getDetailsOrder)
 router.delete('/cancel-order/:id',authUserMiddleWare, OrderController.cancelOrderDetails)
 router.get('/get-all-order',authMiddleWare, OrderController.getAllOrder)
-router.post('/payment/:userId', OrderController.createOrderFromCart);
+router.post('/check-out/:userId', OrderController.createOrderFromCart)
+router.post('/order-payment/:orderId', OrderController.createCompleteOrderController)
 
 module.exports = router

@@ -4,6 +4,8 @@ const Cart = require('../models/CartModel');
 const Product = require('../models/ProductModel');
 const Order = require('../models/OrderProduct');
 const User = require('../models/UserModel');
+const CompleteOrder = require('../models/CompleteOrderModel');
+const { createCompleteOrder } = require('../services/OrderService');
 
 const createOrder = async (req, res) => {
     try { 
@@ -98,12 +100,14 @@ const createOrderFromCart = asyncHandler(async (req, res) => {
     const { selectedItems } = req.body; // Array of selected items with product ID and amount
 
     try {
+        // Find the user by ID
         const user = await User.findById(userId);
         if (!user) {
             res.status(404).json({ message: 'User not found' });
             return;
         }
 
+        // Find the cart for the user and populate the products
         const cart = await Cart.findOne({ orderby: user._id }).populate('products.product');
         if (!cart) {
             res.status(404).json({ message: 'Cart not found' });
@@ -113,9 +117,10 @@ const createOrderFromCart = asyncHandler(async (req, res) => {
         const orderItems = [];
         let itemsPrice = 0;
 
+        // Loop through each selected item
         for (let selectedItem of selectedItems) {
             const cartItem = cart.products.find(p => p.product._id.toString() === selectedItem._id);
-            console.log('cartItem id', cartItem)
+
             if (cartItem && cartItem.amount >= selectedItem.amount) {
                 const product = await Product.findById(cartItem.product._id);
 
@@ -139,21 +144,22 @@ const createOrderFromCart = asyncHandler(async (req, res) => {
             }
         }
 
-        const shippingPrice = 5.0; // For simplicity, fixed shipping price
+        // Calculate the total price (assuming a fixed shipping price for simplicity)
+        const shippingPrice = 5.0;
         const totalPrice = itemsPrice + shippingPrice;
 
+        // Create the new order
         const newOrder = new Order({
             orderItems,
-            shippingAddress: req.body.shippingAddress,
-            paymentMethod: req.body.paymentMethod,
             itemsPrice,
-            shippingPrice,
             totalPrice,
             user: user._id,
-            isPaid: false,
         });
 
+        // Save the new order
         const createdOrder = await newOrder.save();
+
+        // Respond with the created order
         res.status(201).json(createdOrder);
 
     } catch (error) {
@@ -161,11 +167,32 @@ const createOrderFromCart = asyncHandler(async (req, res) => {
     }
 });
 
+const createCompleteOrderController = async (req, res) => {
+    const orderId = req.params.orderId;
+    const { shippingAddress} = req.body; // Nhận thông tin địa chỉ và phương thức thanh toán từ request body
+
+    try {
+        const response = await createCompleteOrder(orderId, shippingAddress);
+
+        if (response.status === 'ERR') {
+            return res.status(400).json(response);
+        }
+
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(500).json({
+            status: 'ERR',
+            message: error.message
+        });
+    }
+};
+
 module.exports = {
     createOrder,
     getAllOrderDetails,
     getDetailsOrder,
     cancelOrderDetails,
     getAllOrder,
-    createOrderFromCart
+    createOrderFromCart,
+    createCompleteOrderController
 }
