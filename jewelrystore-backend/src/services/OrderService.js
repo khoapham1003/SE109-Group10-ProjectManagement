@@ -1,6 +1,7 @@
 const Order = require("../models/OrderProduct")
 const Product = require("../models/ProductModel")
 const EmailService = require("../services/EmailService")
+const CompleteOrder = require('../models/CompleteOrderModel');
 
 const createOrder = (newOrder) => {
     return new Promise(async (resolve, reject) => {
@@ -204,10 +205,51 @@ const getAllOrder = () => {
     })
 }
 
+const createCompleteOrder = async (orderId, shippingAddress) => {
+    try {
+        // Tìm đơn hàng từ OrderProduct theo ID
+        const orderProduct = await Order.findById(orderId);
+
+        if (!orderProduct) {
+            return {
+                status: 'ERR',
+                message: 'Order not found in OrderProduct'
+            };
+        }
+
+        // Tạo đơn hàng mới trong CompleteOrder với thông tin từ OrderProduct và thêm các trường mới
+        const newCompleteOrder = new CompleteOrder({
+            orderProduct: orderProduct._id,
+            itemsPrice: orderProduct.itemsPrice,
+            totalPrice: orderProduct.totalPrice,
+            user: orderProduct.user,
+            shippingAddress: shippingAddress,
+            
+            isPaid: true,
+            paidAt: Date.now()
+            
+        });
+
+        const createdCompleteOrder = await newCompleteOrder.save();
+
+        return {
+            status: 'OK',
+            message: 'Order updated successfully in CompleteOrder',
+            data: createdCompleteOrder
+        };
+    } catch (error) {
+        return {
+            status: 'ERR',
+            message: error.message
+        };
+    }
+};
+
 module.exports = {
     createOrder,
     getAllOrderDetails,
     getOrderDetails,
     cancelOrderDetails,
-    getAllOrder
+    getAllOrder,
+    createCompleteOrder
 }
