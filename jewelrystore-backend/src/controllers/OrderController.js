@@ -4,8 +4,7 @@ const Cart = require('../models/CartModel');
 const Product = require('../models/ProductModel');
 const Order = require('../models/OrderProduct');
 const User = require('../models/UserModel');
-const CompleteOrder = require('../models/CompleteOrderModel');
-const { createCompleteOrder } = require('../services/OrderService');
+
 
 const createOrder = async (req, res) => {
     try { 
@@ -167,25 +166,19 @@ const createOrderFromCart = asyncHandler(async (req, res) => {
     }
 });
 
-const createCompleteOrderController = async (req, res) => {
+const createCompleteOrderController = asyncHandler(async (req, res) => {
     const orderId = req.params.orderId;
-    const { shippingAddress} = req.body; // Nhận thông tin địa chỉ và phương thức thanh toán từ request body
+    const { shippingAddress } = req.body;
 
-    try {
-        const response = await createCompleteOrder(orderId, shippingAddress);
+    const response = await OrderService.createCompleteOrder(orderId, shippingAddress);
 
-        if (response.status === 'ERR') {
-            return res.status(400).json(response);
-        }
-
-        return res.status(200).json(response);
-    } catch (error) {
-        return res.status(500).json({
-            status: 'ERR',
-            message: error.message
-        });
+    if (response.status === 'ERR') {
+        res.status(400).json({ message: response.message });
+    } else {
+        res.status(200).json(response.data);
     }
-};
+});
+
 
 module.exports = {
     createOrder,
@@ -194,5 +187,6 @@ module.exports = {
     cancelOrderDetails,
     getAllOrder,
     createOrderFromCart,
-    createCompleteOrderController
+    createCompleteOrderController,
+    
 }
