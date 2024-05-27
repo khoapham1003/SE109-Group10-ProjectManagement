@@ -1,7 +1,6 @@
 const Order = require("../models/OrderProduct")
 const Product = require("../models/ProductModel")
 const EmailService = require("../services/EmailService")
-const CompleteOrder = require('../models/CompleteOrderModel');
 
 const createOrder = (newOrder) => {
     return new Promise(async (resolve, reject) => {
@@ -207,41 +206,28 @@ const getAllOrder = () => {
 
 const createCompleteOrder = async (orderId, shippingAddress) => {
     try {
-        // Tìm đơn hàng từ OrderProduct theo ID
-        const orderProduct = await Order.findById(orderId);
-
-        if (!orderProduct) {
-            return {
-                status: 'ERR',
-                message: 'Order not found in OrderProduct'
-            };
+        // Find the order by ID
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return { status: 'ERR', message: 'Order not found' };
         }
 
-        // Tạo đơn hàng mới trong CompleteOrder với thông tin từ OrderProduct và thêm các trường mới
-        const newCompleteOrder = new CompleteOrder({
-            orderProduct: orderProduct._id,
-            itemsPrice: orderProduct.itemsPrice,
-            totalPrice: orderProduct.totalPrice,
-            user: orderProduct.user,
-            shippingAddress: shippingAddress,
-            
-            isPaid: true,
-            paidAt: Date.now()
-            
-        });
-
-        const createdCompleteOrder = await newCompleteOrder.save();
-
-        return {
-            status: 'OK',
-            message: 'Order updated successfully in CompleteOrder',
-            data: createdCompleteOrder
+        // Update the order with shipping address and payment information
+        order.shippingAddress = shippingAddress || {
+            fullName: "null",
+            address: "null",
+            city: "null",
+            phone: 1234567891,
         };
+        order.isPaid = true;
+        order.paidAt = Date.now();
+
+        // Save the updated order
+        const updatedOrder = await order.save();
+
+        return { status: 'OK', data: updatedOrder };
     } catch (error) {
-        return {
-            status: 'ERR',
-            message: error.message
-        };
+        return { status: 'ERR', message: error.message };
     }
 };
 

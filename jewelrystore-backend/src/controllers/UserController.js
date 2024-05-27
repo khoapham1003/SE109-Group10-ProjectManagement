@@ -452,6 +452,19 @@ const createUserCart = asyncHandler(async (req, res) => {
     }
   });
 
+  const changePassword = asyncHandler(async (req, res) => {
+    const userId = req.params.userId;
+    const { currentPassword, newPassword } = req.body;
+
+    const response = await UserService.changePassword(userId, currentPassword, newPassword);
+
+    if (response.status === 'ERR') {
+        res.status(400).json({ message: response.message });
+    } else {
+        res.status(200).json({ message: response.message });
+    }
+});
+
 module.exports = {
     createUser,
     loginUser,
@@ -467,6 +480,7 @@ module.exports = {
     updateUserCart,
     deleteProductUserCart,
     deleteAllProductInCart,
-    getOrderHistory
+    getOrderHistory,
+    changePassword,
 
 }
