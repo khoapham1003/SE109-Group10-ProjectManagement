@@ -157,7 +157,14 @@ const createOrderFromCart = asyncHandler(async (req, res) => {
 
         // Save the new order
         const createdOrder = await newOrder.save();
+        
+        // Remove selected items from the cart
+        cart.products = cart.products.filter(
+            cartItem => !selectedItems.some(selectedItem => selectedItem._id === cartItem.product._id.toString())
+        );
 
+        // Save the updated cart
+        await cart.save();
         // Respond with the created order
         res.status(201).json(createdOrder);
 
