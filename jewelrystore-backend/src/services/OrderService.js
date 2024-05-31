@@ -115,9 +115,7 @@ const getAllOrderDetails = (id) => {
 const getOrderDetails = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const order = await Order.findById({
-                _id: id
-            })
+            const order = await Order.find({ isPaid: true }).exec().sort({createdAt: -1, updatedAt: -1})
             if (order === null) {
                 resolve({
                     status: 'ERR',
