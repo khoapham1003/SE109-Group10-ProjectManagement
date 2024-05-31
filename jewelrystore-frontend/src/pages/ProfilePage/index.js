@@ -41,7 +41,6 @@ function ProfilePage() {
   const [changePasswordData, setChangePasswordData] = useState({
     oldPassword: "",
     newPassword: "",
-    confirmNewPassword: "",
   });
   const [isChangePasswordModalVisible, setChangePasswordModalVisible] =
     useState(false);
@@ -86,12 +85,9 @@ function ProfilePage() {
   const handleSaveClick = async () => {
     try {
       const data = {
-        gUser_id: userId,
-        sUser_firstname: userData.sUser_firstname,
-        sUser_lastname: userData.sUser_lastname,
         dtUser_dob: editedData.dtUser_dob,
-        bUser_sex: Boolean(editedData.bUser_sex),
-        sUser_phonenumber: editedData.sUser_phonenumber,
+        gender: Boolean(editedData.bUser_sex),
+        phone: editedData.sUser_phonenumber,
       };
       console.log(data);
       const response = await fetch(
@@ -167,40 +163,30 @@ function ProfilePage() {
     });
   };
 
-  const handleConfirmNewPasswordChange = (e) => {
-    setChangePasswordData({
-      ...changePasswordData,
-      confirmNewPassword: e.target.value,
-    });
-  };
 
   const handleModalCancel = () => {
     // Reset the change password form state and hide the modal
     setChangePasswordData({
       oldPassword: "",
       newPassword: "",
-      confirmNewPassword: "",
     });
     setChangePasswordModalVisible(false);
   };
 
   const handleChangePasswordSave = async () => {
     try {
-      const apiUrl = "https://localhost:7139/api/User/ChangePassword";
 
       const data = {
-        gUser_id: userId,
-        sUser_oldPassword: changePasswordData.oldPassword,
-        sUser_newPassword: changePasswordData.newPassword,
-        sUser_confirmnewPassword: changePasswordData.confirmNewPassword,
+        oldPassword: changePasswordData.oldPassword,
+        newPassword: changePasswordData.newPassword,
       };
       console.log(data);
 
-      const response = await fetch(apiUrl, {
-        method: "POST",
+      const response = await fetch(`http://localhost:3001/user/change-password/${userId}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
+          token: `Bearer ${jwtToken}`,
         },
         body: JSON.stringify(data),
       });
@@ -222,7 +208,6 @@ function ProfilePage() {
         setChangePasswordData({
           oldPassword: "",
           newPassword: "",
-          confirmNewPassword: "",
         });
         setChangePasswordModalVisible(false);
       }
@@ -264,7 +249,7 @@ function ProfilePage() {
 
   const handleCardClick = (item) => {
     console.log("Card clicked:", item);
-    localStorage.setItem("orderhistoryId", item.iOrder_id);
+    localStorage.setItem("orderhistoryId", item._id);
     navigate(`/history`);
   };
 
@@ -408,36 +393,6 @@ function ProfilePage() {
                   required: true,
                   message: "Xin vui lòng nhập Mật khẩu!",
                 },
-                {
-                  validator: (_, value) => {
-                    if (value.length < 8) {
-                      return Promise.reject(
-                        "Mật khẩu phải chứa ít nhất 8 kí tự!"
-                      );
-                    }
-                    if (!/[A-Z]/.test(value)) {
-                      return Promise.reject(
-                        "Mật khẩu phải chứa tối thiểu 1 ký tự in hoa!"
-                      );
-                    }
-                    if (!/[a-z]/.test(value)) {
-                      return Promise.reject(
-                        "Mật khẩu phải chứa tối thiểu 1 ký tự thường!"
-                      );
-                    }
-                    if (!/\d/.test(value)) {
-                      return Promise.reject(
-                        "Mật khẩu phải chứa tối thiểu 1 ký tự số!"
-                      );
-                    }
-                    if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
-                      return Promise.reject(
-                        "Mật khẩu phải chứa tối thiểu 1 ký tự đặc biệt!"
-                      );
-                    }
-                    return Promise.resolve();
-                  },
-                },
               ]}
             >
               <Input.Password
@@ -445,35 +400,6 @@ function ProfilePage() {
                 placeholder="Mật khẩu mới"
                 name="newpassword"
                 onChange={handleNewPasswordChange}
-              />
-            </Form.Item>
-
-            <Form.Item
-              className="no_margin"
-              label={<p className="label">Xác nhận mật khẩu mới</p>}
-              name="confirmpassword"
-              dependencies={["newpassword"]}
-              hasFeedback
-              rules={[
-                {
-                  required: true,
-                  message: "Xin vui lòng xác nhận mật khẩu mới!",
-                },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("newpassword") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error("Mật khẩu không khớp!"));
-                  },
-                }),
-              ]}
-            >
-              <Input.Password
-                value={changePasswordData.confirmNewPassword}
-                placeholder="xác nhận mật khẩu mới"
-                name="confirmnewpassword"
-                onChange={handleConfirmNewPasswordChange}
               />
             </Form.Item>
           </Form>
@@ -492,13 +418,13 @@ function ProfilePage() {
             >
               <Descriptions column={1} size="small">
                 <Descriptions.Item label="Tên người nhận">
-                  {item.totalPrice}
+                  {item.shippingAddress.fullName}
                 </Descriptions.Item>
                 <Descriptions.Item label="SĐT">
-                  {item.totalPrice}
+                  {item.shippingAddress.phone}
                 </Descriptions.Item>
                 <Descriptions.Item label="Địa chỉ nhận hàng">
-                  {item.totalPrice + " "+ item.totalPrice}
+                  {item.shippingAddress.address}
                 </Descriptions.Item>
                 <Descriptions.Item label="Ngày mua">
                   {item.createdAt}

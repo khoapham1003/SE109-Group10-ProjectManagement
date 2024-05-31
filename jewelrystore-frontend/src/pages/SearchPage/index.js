@@ -68,6 +68,7 @@ const SearchPage = () => {
               <img
                 className="mp_book_item_image"
                 alt={item.name}
+                src={item.image}
                
               />
             }

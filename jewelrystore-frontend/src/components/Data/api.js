@@ -12,8 +12,9 @@ export const fetchProductData = async () => {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    console.log(response);
     const data = await response.json();
+    console.log(data);
+
     return data;
   } catch (error) {
     console.error('Error fetching product data:', error);

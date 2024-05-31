@@ -7,6 +7,7 @@ function UnlogLayout({ children }) {
       style={{
         display: "flex",
         flexDirection: "column",
+        
       }}
     >
       <Header />

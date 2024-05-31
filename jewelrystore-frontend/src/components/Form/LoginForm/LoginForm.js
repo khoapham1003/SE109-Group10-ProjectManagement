@@ -7,6 +7,16 @@ const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const getCookie = (cookieName) => {
+    const cookies = document.cookie.split("; ");
+    for (const cookie of cookies) {
+      const [name, value] = cookie.split("=");
+      if (name === cookieName) {
+        return value;
+      }
+    }
+    return null;
+  };
 
   const handleLogIn = async () => {
     try {
@@ -46,7 +56,20 @@ const Login = () => {
           document.cookie = `accessToken=${responseData.access_token}; path=/`;
           document.cookie = `refreshToken=${responseData.refresh_token}; path=/`;
           message.success("Đăng nhập thành công!");
-          navigate(`/`);
+          const accessToken = responseData.access_token;
+          if (accessToken) {
+            const tokenParts = accessToken.split(".");
+            if (tokenParts.length !== 3) {
+              throw new Error("Invalid token format");
+            }
+          const decodedToken = JSON.parse(atob(tokenParts[1]));
+          if (decodedToken.isAdmin) {
+            navigate(`/admin`);
+          } else {
+            navigate(`/`);
+          }
+          }
+          
           window.location.reload();
         }
       }

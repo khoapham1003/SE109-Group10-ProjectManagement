@@ -260,6 +260,8 @@ function CartPage() {
                     width: 80,
                   }}
                   alt={item.name}
+                src={item.image}
+
                 />
               </Col>
               <Col md={8}>

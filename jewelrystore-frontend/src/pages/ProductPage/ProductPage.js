@@ -65,7 +65,7 @@ function ProductPage() {
   const jwtToken = getCookie("accessToken");
   const userId = getCookie("userid");
   console.log(jwtToken);
-  
+
   const handleAddToCart = async () => {
     setAmount(1); // Đặt lại số lượng sau khi thêm vào giỏ hàng
     try {
@@ -90,17 +90,13 @@ function ProductPage() {
       console.log(data);
 
       if (response.ok) {
-       // navigate(`/`);
+        // navigate(`/`);
         console.log("Item added to the cart in the database");
         message.success("Sản phẩm đã được thêm vào giỏ hàng!");
       } else {
         const error = await response.text();
-      console.log(error);
-
-        if (error) {
-          message.error(`${error}`);
-        }
-        console.error("Failed to add item to the cart in the database");
+        console.log(error);
+        message.error("Vui lòng đăng nhập!");
       }
     } catch (error) {
       message.error("Vui lòng đăng nhập!");
@@ -108,16 +104,25 @@ function ProductPage() {
     }
   };
 
+  function convertNewlinesToBreaks(text) {
+    return text.split(",").map((str, index) => (
+      <React.Fragment key={index}>
+        {str}
+        <br /> <br />
+      </React.Fragment>
+    ));
+  }
+  function ExhibitionContent({ content }) {
+    return <div>{convertNewlinesToBreaks(content)}</div>;
+  }
+
   return (
     <div>
       {item && (
         <div>
           <Row className="pp_white_bg">
             <Col md={5} offset={1} className="image_column">
-              <Image
-                
-                alt={item.name}
-              />
+              <Image src={item.image} alt={item.name} />
             </Col>
             <Col md={14} offset={1} className="shortdetail_column">
               <List className="detail_list">
@@ -126,7 +131,7 @@ function ProductPage() {
                   <span>
                     <br />
                     <br />
-                  {/* {item.sProduct_author} */}
+                    {/* {item.sProduct_author} */}
                   </span>
                 </List.Item>
                 {/* <List.Item className="pp_rate">
@@ -169,136 +174,14 @@ function ProductPage() {
             <Col className="productdetail">
               <List>
                 <List.Item>
-                  <h2>Thông tin sản phẩm</h2>
-                </List.Item>
-                <List.Item style={{ fontSize: "15px", color: "#8c8c8c" }}>
-                  Xuất Sứ: {item.sProduct_madein}
-                </List.Item>
-                <List.Item style={{ fontSize: "15px", color: "#8c8c8c" }}>
-                  Năm xuất bản: {item.iProduct_yop}
-                </List.Item>
-                <List.Item style={{ fontSize: "15px", color: "#8c8c8c" }}>
-                  Nhà xuất bản: {item.sProduct_brand}
-                </List.Item>
-                <List.Item style={{ fontSize: "15px", color: "#8c8c8c" }}>
-                  Nhà cung cấp: {item.sProduct_supplier}
-                </List.Item>
-                <List.Item style={{ fontSize: "15px", color: "#8c8c8c" }}>
-                  Tác giả: {item.sProduct_author}
-                </List.Item>
-                <List.Item>
                   <h2>Mô tả sản phẩm</h2>
                 </List.Item>
                 <List.Item style={{ fontSize: "16px", color: "#8c8c8c" }}>
-                  {item.description}
+                  <ExhibitionContent content={item.description} />
                 </List.Item>
               </List>
             </Col>
           </Row>
-          <Col className="pp_padding pp_white_bg">
-            <Row className="review_bar">
-              <Row>
-                <h2 className="review_title">Đánh giá sản phẩm</h2>
-              </Row>
-              <Row className="review_proportion">
-                <Col>
-                  <Row className="rate_proportion">
-                    <span className="proportion_myrate green">
-                      {/* {item.dProduct_start_count.toFixed(1)} */}
-                    </span>
-                    <span className="proportion_allrate green">trên 5</span>
-                  </Row>
-                  <Row>
-                    {/* <Rate
-                      className="green"
-                      allowHalf
-                      disabled
-                      defaultValue={item.dProduct_start_count}
-                    /> */}
-                  </Row>
-                </Col>
-                <Col className="rate_filter">
-                  {/* <Button
-                    className="rate_filter_button"
-                    onClick={() => setCurrentRatingFilter(null)}
-                  >
-                    Tất cả
-                  </Button>
-                  <Button
-                    className="rate_filter_button"
-                    onClick={() => setCurrentRatingFilter(5)}
-                  >
-                    5 sao
-                  </Button>
-                  <Button
-                    className="rate_filter_button"
-                    onClick={() => setCurrentRatingFilter(4)}
-                  >
-                    4 sao
-                  </Button>
-                  <Button
-                    className="rate_filter_button"
-                    onClick={() => setCurrentRatingFilter(3)}
-                  >
-                    3 sao
-                  </Button>
-                  <Button
-                    className="rate_filter_button"
-                    onClick={() => setCurrentRatingFilter(2)}
-                  >
-                    2 sao
-                  </Button>
-                  <Button
-                    className="rate_filter_button"
-                    onClick={() => setCurrentRatingFilter(1)}
-                  >
-                    1 sao
-                  </Button> */}
-                </Col>
-              </Row>
-            </Row>
-            {/* <Row>
-              <List
-                className="user_review_list"
-                dataSource={reviewsdata.filter((review) =>
-                  currentRatingFilter
-                    ? review.iReview_start === currentRatingFilter
-                    : true
-                )}
-                renderItem={(item, index) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      avatar={
-                        <Avatar
-                          className="user_avatar"
-                          src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`}
-                        />
-                      }
-                      title={<div>{item.sUser_username}</div>}
-                      description={
-                        <div className="user_review_description">
-                          <Rate
-                            className="green"
-                            style={{ fontSize: "15px" }}
-                            disabled
-                            value={item.iReview_start}
-                          />
-                          <br></br>
-                          <span style={{ fontSize: "10px", color: "#8c8c8c" }}>
-                            {item.sReview_content}
-                          </span>
-                          <br></br>
-                          <span style={{ fontSize: "10px", color: "#8c8c8c" }}>
-                            {item.dtReview_date}
-                          </span>
-                        </div>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
-            </Row> */}
-          </Col>
         </div>
       )}
     </div>

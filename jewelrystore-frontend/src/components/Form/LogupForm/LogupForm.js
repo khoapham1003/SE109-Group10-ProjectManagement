@@ -14,6 +14,7 @@ function Logup() {
   const [confirmpassword, setConfirmpassword] = useState("");
   const [email, setEmail] = useState("");
   const [isSuccess, setSuccess] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {}, []);
 
@@ -56,7 +57,7 @@ function Logup() {
         email: email,
         name: name,
         password: password,
-        confirmpassword: confirmpassword,
+        confirmPassword: confirmpassword,
       };
 
       const response = await fetch("http://localhost:3001/user/sign-up", {
@@ -80,8 +81,16 @@ function Logup() {
           message.error("Đăng ký tài khoản thất bại. Hãy thử lại sau!");
         }
       } else {
-        message.success(`Đăng ký tài khoản thành công!`);
-        navigate(`/sign_in`);
+        const responseData = await response.json();
+        console.log(responseData);
+        if (responseData.status == "ERR") {
+          message.error("Đăng ký thất bại! Lỗi: " + responseData.message);
+          setError("Logup failed. Please try again.");
+          console.error("Logup failed", error);
+        } else {
+          message.success(`Đăng ký tài khoản thành công!`);
+          navigate(`/sign_in`);
+        }
       }
     } catch (error) {
       console.error("Error sign up:", error);
@@ -156,7 +165,9 @@ function Logup() {
                   if (/[0-9]+$/i.test(value)) {
                     return Promise.resolve();
                   } else {
-                    return Promise.reject("Số điện thoại không thể chứa các ký tự chữ !");
+                    return Promise.reject(
+                      "Số điện thoại không thể chứa các ký tự chữ !"
+                    );
                   }
                 },
               },
@@ -186,7 +197,7 @@ function Logup() {
                 if (!value) {
                   return Promise.reject("Xin vui lòng nhập Tên!");
                 }
-              if (/^[^0-9][a-zA-Z0-9]+$/.test(value)) {
+                if (/^[^0-9][a-zA-Z0-9]+$/.test(value)) {
                   return Promise.resolve();
                 } else {
                   return Promise.reject("Kí tự đầu không được là chữ số!");
@@ -213,45 +224,45 @@ function Logup() {
             </span>
           }
           name="password"
-          rules={[
-            {
-              validator: (_, value) => {
-                if (!value) {
-                  return Promise.reject("Xin vui lòng nhập Mật khẩu!");
-                }
+          // rules={[
+          //   {
+          //     validator: (_, value) => {
+          //       if (!value) {
+          //         return Promise.reject("Xin vui lòng nhập Mật khẩu!");
+          //       }
 
-                if (value.length < 8) {
-                  return Promise.reject("Mật khẩu phải chứa ít nhất 8 kí tự!");
-                }
+          //       if (value.length < 8) {
+          //         return Promise.reject("Mật khẩu phải chứa ít nhất 8 kí tự!");
+          //       }
 
-                if (!/[A-Z]/.test(value)) {
-                  return Promise.reject(
-                    "Mật khẩu phải chứa tối thiểu 1 ký tự in hoa!"
-                  );
-                }
+          //       if (!/[A-Z]/.test(value)) {
+          //         return Promise.reject(
+          //           "Mật khẩu phải chứa tối thiểu 1 ký tự in hoa!"
+          //         );
+          //       }
 
-                if (!/[a-z]/.test(value)) {
-                  return Promise.reject(
-                    "Mật khẩu phải chứa tối thiểu 1 ký tự thường!"
-                  );
-                }
+          //       if (!/[a-z]/.test(value)) {
+          //         return Promise.reject(
+          //           "Mật khẩu phải chứa tối thiểu 1 ký tự thường!"
+          //         );
+          //       }
 
-                if (!/\d/.test(value)) {
-                  return Promise.reject(
-                    "Mật khẩu phải chứa tối thiểu 1 ký tự số!"
-                  );
-                }
+          //       if (!/\d/.test(value)) {
+          //         return Promise.reject(
+          //           "Mật khẩu phải chứa tối thiểu 1 ký tự số!"
+          //         );
+          //       }
 
-                if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
-                  return Promise.reject(
-                    "Mật khẩu phải chứa tối thiểu 1 ký tự đặc biệt!"
-                  );
-                }
+          //       if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+          //         return Promise.reject(
+          //           "Mật khẩu phải chứa tối thiểu 1 ký tự đặc biệt!"
+          //         );
+          //       }
 
-                return Promise.resolve();
-              },
-            },
-          ]}
+          //       return Promise.resolve();
+          //     },
+          //   },
+          // ]}
         >
           <Input.Password
             style={{ height: "3.6vh", fontSize: "1.8vh" }}
@@ -272,21 +283,21 @@ function Logup() {
           name="confirmpassword"
           dependencies={["password"]}
           hasFeedback
-          rules={[
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value) {
-                  return Promise.reject("Xin vui lòng nhập Mật khẩu xác nhận!");
-                }
-                if (getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(
-                  new Error("Mật khẩu mới mà bạn vừa nhập không khớp!")
-                );
-              },
-            }),
-          ]}
+          // rules={[
+          //   ({ getFieldValue }) => ({
+          //     validator(_, value) {
+          //       if (!value) {
+          //         return Promise.reject("Xin vui lòng nhập Mật khẩu xác nhận!");
+          //       }
+          //       if (getFieldValue("password") === value) {
+          //         return Promise.resolve();
+          //       }
+          //       return Promise.reject(
+          //         new Error("Mật khẩu mới mà bạn vừa nhập không khớp!")
+          //       );
+          //     },
+          //   }),
+          // ]}
         >
           <Input.Password
             style={{ height: "3.6vh", fontSize: "1.8vh" }}

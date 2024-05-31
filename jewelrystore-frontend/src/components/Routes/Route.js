@@ -39,7 +39,7 @@ function AppRoutes() {
                 return decodedToken.exp < currentTimeInSeconds;
               }
             }
-            return false; 
+            return false;
           }
           return true;
         }
@@ -50,11 +50,13 @@ function AppRoutes() {
 
     return false;
   };
+
   console.log("Is user authenticated:", isUserAuthenticated());
 
   return (
     <BrowserRouter>
       <Routes>
+        <Route />
         {publicRoutes.map((route, index) => {
           const Page = route.component;
           let Layout = DefaultLayout;
@@ -77,7 +79,6 @@ function AppRoutes() {
             />
           );
         })}
-
         {privateRoutes.map((route, index) => {
           const Page = route.component;
           let Layout = DefaultLayout;
@@ -87,7 +88,6 @@ function AppRoutes() {
           } else if (route.layout === null) {
             Layout = Fragment;
           }
-
           return (
             <Route
               key={index}
@@ -98,9 +98,7 @@ function AppRoutes() {
                     <Page />
                   </Layout>
                 ) : (
-                  <>
-                    <Navigate to="/sign_in" />
-                  </>
+                  <Navigate to="/sign_in" />
                 )
               }
             />
