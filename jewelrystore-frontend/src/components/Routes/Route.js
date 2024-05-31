@@ -50,7 +50,18 @@ function AppRoutes() {
 
     return false;
   };
-
+  const isAdmin = () => {
+    const accessToken = getCookie("accessToken");
+    if (accessToken) {
+      const tokenParts = accessToken.split(".");
+      if (tokenParts.length !== 3) {
+        throw new Error("Invalid token format");
+      }
+      const decodedToken = JSON.parse(atob(tokenParts[1]));
+      return decodedToken && decodedToken.isAdmin === true;
+    }
+    return false;
+  };
   console.log("Is user authenticated:", isUserAuthenticated());
 
   return (
@@ -94,9 +105,13 @@ function AppRoutes() {
               path={route.path}
               element={
                 isUserAuthenticated() ? (
-                  <Layout>
-                    <Page />
-                  </Layout>
+                  route.path === "/admin" && !isAdmin() ? (
+                    <Navigate to="/" />
+                  ) : (
+                    <Layout>
+                      <Page />
+                    </Layout>
+                  )
                 ) : (
                   <Navigate to="/sign_in" />
                 )
