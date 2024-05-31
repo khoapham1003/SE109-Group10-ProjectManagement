@@ -49,14 +49,13 @@ function CartPage() {
           },
         }
       );
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
       setItems(data.products);
-  console.log(items);
-
+      console.log(items);
     } catch (error) {
       console.error("Error fetching product data:", error);
       throw error; // Propagate the error to handle it in the calling code
@@ -72,12 +71,12 @@ function CartPage() {
         );
       }
       const response = await fetch(
-        `https://localhost:7139/api/Cart/delete/${cartItemId}`,
+        `http://localhost:3001/user/delete-cart-user/${userId}/${cartItemId}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
+            token: `Bearer ${jwtToken}`,
           },
         }
       );
@@ -98,34 +97,39 @@ function CartPage() {
 
   const handleCheckout = async () => {
     try {
-      const selectedIds = items
+      const selectedItemsData = items
         .filter((item) => selectedItems.includes(item.id))
-        .map((item) => item.id);
-      console.log("selectedids:", selectedIds);
+        .map((item) => ({
+          _id: item.id,
+          amount: item.amount,
+        }));
+
       const requestData = {
-        lCart_ids: selectedIds,
-        gUser_id: userId,
+        selectedItems: selectedItemsData,
       };
 
       console.log("Request Data:", requestData);
 
-      const response = await fetch("https://localhost:7139/api/Order", {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      console.log("Response:", response);
+      const response = await fetch(
+        `http://localhost:3001/order/check-out/${userId}`,
+        {
+          method: "POST",
+          headers: {
+            token: `Bearer ${jwtToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const orderResponse = await response.json();
-      const orderId = orderResponse.iOrder_id;
+      console.log("Response:", orderResponse);
+
+      const orderId = orderResponse._id;
       localStorage.setItem("orderId", orderId);
       navigate(`/checkout`);
       console.log("Order placed successfully!");
@@ -161,14 +165,24 @@ function CartPage() {
 
   const handleQuantityChange = async (itemId, value) => {
     try {
+      if (selectedItems.includes(itemId)) {
+        // If yes, update selectedItems by removing cartItemId
+        setSelectedItems((prevSelectedItems) =>
+          prevSelectedItems.filter((id) => id !== itemId)
+        );
+      }
+      const data = {
+        amount: value,
+      };
       const response = await fetch(
-        `https://localhost:7139/api/Cart/updateamount/${itemId}?amountadd=${value}`,
+        `http://localhost:3001/user/update-cart-user/${userId}/${itemId}`,
         {
-          method: "PATCH",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
+            token: `Bearer ${jwtToken}`,
           },
+          body: JSON.stringify(data),
         }
       );
 
@@ -197,9 +211,7 @@ function CartPage() {
 
   const totalQuantity = items.reduce(
     (total, item) =>
-      selectedItems.includes(item.id)
-        ? total + item.amount
-        : total,
+      selectedItems.includes(item.id) ? total + item.amount : total,
     0
   );
 
@@ -260,18 +272,20 @@ function CartPage() {
                 <div className="amount_part">
                   <Button
                     className="amount_change_button"
-                    onClick={() => handleQuantityChange(item.id, +1)}
+                    onClick={() =>
+                      handleQuantityChange(item.id, item.amount + 1)
+                    }
                   >
                     +
                   </Button>
 
-                  <span style={{ margin: "0px 10px" }}>
-                    {item.amount}
-                  </span>
+                  <span style={{ margin: "0px 10px" }}>{item.amount}</span>
 
                   <Button
                     className="amount_change_button"
-                    onClick={() => handleQuantityChange(item.id, -1)}
+                    onClick={() =>
+                      handleQuantityChange(item.id, item.amount - 1)
+                    }
                     disabled={item.amount === 1}
                   >
                     -

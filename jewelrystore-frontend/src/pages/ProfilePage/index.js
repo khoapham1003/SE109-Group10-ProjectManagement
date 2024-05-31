@@ -64,7 +64,7 @@ function ProfilePage() {
 
         const data = await response.json();
         setUserData(data.data);
-        console.log(userData);
+        console.log(data.data);
         
         setEditedData({
           sUser_phonenumber: data.sUser_phonenumber,
@@ -236,7 +236,7 @@ function ProfilePage() {
     const fetchHistoryOrder = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3001/order/get-all-order/${userId}`,
+          `http://localhost:3001/user/orders/${userId}`,
           {
             method: "GET",
             headers: {
@@ -251,7 +251,7 @@ function ProfilePage() {
 
         const data = await response.json();
         console.log(data);
-        setItems(data.data);
+        setItems(data);
         return data;
       } catch (error) {
         console.error("Error fetching product data:", error);
@@ -263,7 +263,7 @@ function ProfilePage() {
   const handleCardClick = (item) => {
     console.log("Card clicked:", item);
     localStorage.setItem("orderhistoryId", item.iOrder_id);
-    navigate(`/history`);
+    //navigate(`/history`);
   };
 
   return (
@@ -287,7 +287,7 @@ function ProfilePage() {
               <Descriptions.Item label="Ngày sinh">
                 {isEditing ? (
                   <Input
-                    placeholder="yyyy-mm-dd"
+                    placeholder="dd/mm/yyyy"
                     value={editedData.birthday}
                     onChange={(e) =>
                       handleInputChange("dtUser_dob", e.target.value)
@@ -490,19 +490,19 @@ function ProfilePage() {
             >
               <Descriptions column={1} size="small">
                 <Descriptions.Item label="Tên người nhận">
-                  {item.sOrder_name_receiver}
+                  {item.totalPrice}
                 </Descriptions.Item>
                 <Descriptions.Item label="SĐT">
-                  {item.sOrder_phone_receiver}
+                  {item.totalPrice}
                 </Descriptions.Item>
                 <Descriptions.Item label="Địa chỉ nhận hàng">
-                  {item.sOrder_address_receiver}
+                  {item.totalPrice + " "+ item.totalPrice}
                 </Descriptions.Item>
                 <Descriptions.Item label="Ngày mua">
-                  {item.dtOrrder_dateorder}
+                  {item.createdAt}
                 </Descriptions.Item>
                  <Descriptions.Item label="Tổng đơn hàng">
-                  {item.vOrder_total}
+                  {item.totalPrice}
                 </Descriptions.Item>
               </Descriptions>
             </Card>
