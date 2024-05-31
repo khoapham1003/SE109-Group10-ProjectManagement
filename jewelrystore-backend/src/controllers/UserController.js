@@ -278,6 +278,20 @@ const createUserCart = asyncHandler(async (req, res) => {
       const cart = await Cart.findOne({ orderby: _id })
         .populate("products.product")
         .exec();
+
+      if (!cart) {
+        return res.status(200).json({
+          message: "Your cart is empty"
+        });
+      }
+
+      if (!cart || cart.products.length === 0) {
+        return res.status(200).json({
+          cartTotal: 0,
+          products: [],
+          message: "Your cart is empty"
+        });
+      }
       const cartData = {
         cartTotal: cart.cartTotal,
         products: cart.products.map((product) => {
