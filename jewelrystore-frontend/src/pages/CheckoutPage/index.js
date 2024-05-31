@@ -9,7 +9,12 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [items, setItems] = useState([]);
-  const [order, setOrder] = useState([]);
+  const [order, setOrder] = useState({
+      fullName: "",
+      address:"",
+      city: "",
+      phone: "",
+});
   const [promotionalCode, setPromotionalCode] = useState("");
   const [voucherDiscount, setVoucherDiscount] = useState(0);
   const [shippingFee, setShippingFee] = useState(30000);
@@ -36,12 +41,12 @@ function CheckoutPage() {
     const fetchCheckOutData = async () => {
       try {
         const response = await fetch(
-          `https://localhost:7139/api/Order/${orderId}`,
+          `http://localhost:3001/order/get-details-order/${orderId}`,
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${jwtToken}`,
+              token: `Bearer ${jwtToken}`,
             },
           }
         );
@@ -52,8 +57,7 @@ function CheckoutPage() {
 
         const data = await response.json();
         console.log(data);
-        setItems(data.lOrder_items);
-        setOrder(data);
+        setItems(data.data.orderItems);
         return data;
       } catch (error) {
         console.error("Error fetching product data:", error);
@@ -108,7 +112,7 @@ function CheckoutPage() {
 
   const calculateTotalPrice = () => {
     return items.reduce(
-      (total, item) => total + item.vProduct_price * item.iProduct_amount,
+      (total, item) => total + item.price * item.amount,
       0
     );
   };
@@ -124,18 +128,20 @@ function CheckoutPage() {
   const handleConfirmPayment = async () => {
     try {
       const data = {
-        iOrder_id: orderId,
-        sOrder_name_receiver: order.sOrder_name_receiver,
-        sOrder_phone_receiver: order.sOrder_phone_receiver,
-        sOrder_address_receiver: order.sOrder_address_receiver,
-        sPromotionalCode_code: promotionalCode,
+        shippingAddress: {
+          fullName: order.name,
+          address: order.address,
+          city: "Anytown",
+          phone: order.phone,
+          
+        },
       };
       console.log(data);
-      const response = await fetch("https://localhost:7139/api/Order/buy", {
-        method: "PUT",
+      const response = await fetch(`http://localhost:3001/order/order-payment/${orderId}`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
+          token: `Bearer ${jwtToken}`,
         },
         body: JSON.stringify(data),
       });
@@ -193,8 +199,8 @@ function CheckoutPage() {
               <div>
                 Tên người dùng:
                 <Input
-                  name="sOrder_name_receiver"
-                  value={order.sOrder_name_receiver}
+                  name="name"
+                  value={order.name}
                   onChange={handleInputChange}
                 />
               </div>
@@ -203,8 +209,8 @@ function CheckoutPage() {
               <div>
                 Phone:{" "}
                 <Input
-                  name="sOrder_phone_receiver"
-                  value={order.sOrder_phone_receiver}
+                  name="phone"
+                  value={order.phone}
                   onChange={handleInputChange}
                 />
               </div>
@@ -213,8 +219,8 @@ function CheckoutPage() {
               <div>
                 Địa chỉ:{" "}
                 <Input
-                  name="sOrder_address_receiver"
-                  value={order.sOrder_address_receiver}
+                  name="address"
+                  value={order.address}
                   onChange={handleInputChange}
                 />
               </div>
@@ -238,7 +244,7 @@ function CheckoutPage() {
         </div>
         <div className="cop_cartlist_item">
           {items.map((item) => (
-            <Card className="cop_item_cart" key={item.iCart_id}>
+            <Card className="cop_item_cart" key={item._id}>
               <Row align="middle">
                 <Col md={2} offset={1}>
                   <Image
@@ -247,21 +253,21 @@ function CheckoutPage() {
                       width: 80,
                     }}
                     
-                    alt={item.sProduct_name}
+                    alt={item.name}
                   />
                 </Col>
                 <Col md={8}>
-                  <span>{item.sProduct_name}</span>
+                  <span>{item.name}</span>
                 </Col>
                 <Col md={3} offset={1}>
-                  <span>{item.vProduct_price}đ</span>
+                  <span>{item.price}đ</span>
                 </Col>
                 <Col md={3} offset={1}>
-                  <span>{item.iProduct_amount}</span>
+                  <span>{item.amount}</span>
                 </Col>
                 <Col md={3} offset={1}>
                   <span className="cop_item_price">
-                    {item.vProduct_price * item.iProduct_amount}đ
+                    {item.price * item.amount}đ
                   </span>
                 </Col>
               </Row>
@@ -327,13 +333,13 @@ function CheckoutPage() {
                 style={{ width: "150px" }}
                 onClick={() => {
                   if (
-                    order.sOrder_name_receiver &&
-                    order.sOrder_phone_receiver &&
-                    order.sOrder_address_receiver
+                    order.name &&
+                    order.phone &&
+                    order.address
                   ) {
                     if (
-                      order.sOrder_phone_receiver.length !== 10 ||
-                      order.sOrder_phone_receiver[0] !== "0"
+                      order.phone.length !== 10 ||
+                      order.phone[0] !== "0"
                     ) {
                       message.error(
                         "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0"

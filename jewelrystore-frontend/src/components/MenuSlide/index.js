@@ -13,7 +13,7 @@ const MenuSlide = ({ onMenuSelect }) => {
 
   const fetchMenuData = async () => {
     try {
-      const response = await fetch("https://localhost:7139/api/Category", {
+      const response = await fetch("http://localhost:3001/product/get-all-type", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -23,8 +23,8 @@ const MenuSlide = ({ onMenuSelect }) => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      setMenuData(data);
-      console.log("menuslide:", data);
+      setMenuData(data.data);
+      console.log("menuslide:", menuData);
     } catch (error) {
       console.error("Error fetching menu data:", error);
     }
