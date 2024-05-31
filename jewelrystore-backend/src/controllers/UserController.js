@@ -9,22 +9,23 @@ const Order = require("../models/OrderProduct");
 const { use } = require("../routes/UserRouter");
 
 const createUser = async (req, res) => {
+  console.log("req.body", req.body)
     try {
         const { name, email, password, confirmPassword, phone, address, gender, birthday } = req.body
         const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
         const isCheckEmail = reg.test(email)
         if (!email || !password || !confirmPassword) {
-            return res.status(200).json({
+            return res.status(404).json({
                 status: 'ERR',
                 message: 'The input is required'
             })
         } else if (!isCheckEmail) {
-            return res.status(200).json({
+            return res.status(404).json({
                 status: 'ERR',
                 message: 'The input is email'
             })
         } else if (password !== confirmPassword) {
-            return res.status(200).json({
+            return res.status(404).json({
                 status: 'ERR',
                 message: 'The password is equal confirmPassword'
             })
