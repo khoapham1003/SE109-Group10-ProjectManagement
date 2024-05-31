@@ -10,11 +10,11 @@ function CheckoutPage() {
   const location = useLocation();
   const [items, setItems] = useState([]);
   const [order, setOrder] = useState({
-      fullName: "",
-      address:"",
-      city: "",
-      phone: "",
-});
+    fullName: "",
+    address: "",
+    city: "",
+    phone: "",
+  });
   const [promotionalCode, setPromotionalCode] = useState("");
   const [voucherDiscount, setVoucherDiscount] = useState(0);
   const [shippingFee, setShippingFee] = useState(30000);
@@ -111,10 +111,7 @@ function CheckoutPage() {
   };
 
   const calculateTotalPrice = () => {
-    return items.reduce(
-      (total, item) => total + item.price * item.amount,
-      0
-    );
+    return items.reduce((total, item) => total + item.price * item.amount, 0);
   };
 
   let totalPrice = calculateTotalPrice();
@@ -133,18 +130,20 @@ function CheckoutPage() {
           address: order.address,
           city: "Anytown",
           phone: order.phone,
-          
         },
       };
       console.log(data);
-      const response = await fetch(`http://localhost:3001/order/order-payment/${orderId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          token: `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        `http://localhost:3001/order/order-payment/${orderId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            token: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       console.log("Response:", response);
 
@@ -252,8 +251,8 @@ function CheckoutPage() {
                       height: 80,
                       width: 80,
                     }}
-                    
                     alt={item.name}
+                    src={item.image}
                   />
                 </Col>
                 <Col md={8}>
@@ -332,15 +331,8 @@ function CheckoutPage() {
                 className="cop_button1"
                 style={{ width: "150px" }}
                 onClick={() => {
-                  if (
-                    order.name &&
-                    order.phone &&
-                    order.address
-                  ) {
-                    if (
-                      order.phone.length !== 10 ||
-                      order.phone[0] !== "0"
-                    ) {
+                  if (order.name && order.phone && order.address) {
+                    if (order.phone.length !== 10 || order.phone[0] !== "0") {
                       message.error(
                         "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0"
                       );

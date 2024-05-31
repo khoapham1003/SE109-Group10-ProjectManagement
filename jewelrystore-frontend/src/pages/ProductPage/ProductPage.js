@@ -115,6 +115,7 @@ function ProductPage() {
           <Row className="pp_white_bg">
             <Col md={5} offset={1} className="image_column">
               <Image
+                src={item.image}
                 
                 alt={item.name}
               />

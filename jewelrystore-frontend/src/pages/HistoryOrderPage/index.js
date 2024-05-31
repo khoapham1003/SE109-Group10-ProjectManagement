@@ -35,7 +35,7 @@ function HistoryOrderPage() {
     const fetchCheckOutData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3001/order/get-all-order/${orderId}`,
+          `http://localhost:3001/order/get-details-order/${orderId}`,
           {
             method: "GET",
             headers: {
@@ -51,8 +51,8 @@ function HistoryOrderPage() {
 
         const data = await response.json();
         console.log(data);
-        setItems(data.lOrder_items);
-        setOrder(data);
+        setItems(data.data.orderItems);
+        setOrder(data.data.shippingAddress);
         return data;
       } catch (error) {
         console.error("Error fetching product data:", error);
@@ -63,7 +63,7 @@ function HistoryOrderPage() {
 
   const calculateTotalPrice = () => {
     return items.reduce(
-      (total, item) => total + item.vProduct_price * item.iProduct_amount,
+      (total, item) => total + item.price * item.amount,
       0
     );
   };
@@ -83,7 +83,7 @@ function HistoryOrderPage() {
           iOrder_id: order.iOrder_id,
           lReview_products: [
             {
-              iProduct_id: selectedProduct.iProduct_id,
+              id: selectedProduct.id,
               iReview_start: reviewData.iReview_start,
               sReview_content: reviewData.sReview_content,
             },
@@ -127,9 +127,9 @@ function HistoryOrderPage() {
             <List.Item>
               <h2>Thông tin người nhận</h2>
             </List.Item>
-            <List.Item>Tên người dùng: {order.sOrder_name_receiver}</List.Item>
-            <List.Item>Phone: {order.sOrder_phone_receiver}</List.Item>
-            <List.Item>Địa chỉ: {order.sOrder_address_receiver}</List.Item>
+            <List.Item>Tên người dùng: {order.fullName}</List.Item>
+            <List.Item>Phone: {order.phone}</List.Item>
+            <List.Item>Địa chỉ: {order.address}</List.Item>
           </List>
         </div>
         <div className="ho_cartlist_header">
@@ -157,31 +157,23 @@ function HistoryOrderPage() {
                       height: 80,
                       width: 80,
                     }}
-                   
-                    alt={item.sProduct_name}
+                    src={item.image}
+                    alt={item.name}
                   />
                 </Col>
                 <Col md={8}>
-                  <span>{item.sProduct_name}</span>
+                  <span>{item.name}</span>
                 </Col>
                 <Col md={2} offset={1}>
-                  <span>{item.vProduct_price}đ</span>
+                  <span>{item.price}đ</span>
                 </Col>
                 <Col md={2} offset={1}>
-                  <span>{item.iProduct_amount}</span>
+                  <span>{item.amount}</span>
                 </Col>
                 <Col md={2} offset={1}>
                   <span className="ho_item_price">
-                    {item.vProduct_price * item.iProduct_amount}đ
+                    {item.price * item.amount}đ
                   </span>
-                </Col>
-                <Col md={2} offset={1}>
-                  <Button
-                    className="ho_review_button"
-                    onClick={() => handleReviewClick(index)}
-                  >
-                    Đánh giá
-                  </Button>
                 </Col>
               </Row>
             </Card>
@@ -193,9 +185,6 @@ function HistoryOrderPage() {
               <h2>Thanh toán</h2>
             </List.Item>
             <List.Item>
-              <span>Voucher:{order.sPromoionalCode_code}</span>
-            </List.Item>
-            <List.Item>
               <span>Tổng tiền hàng: {totalPrice}đ</span>
             </List.Item>
             <List.Item>
@@ -203,7 +192,7 @@ function HistoryOrderPage() {
             </List.Item>
             <List.Item>
               <span style={{ fontWeight: "500", fontStyle: "italic" }}>
-                Tổng thanh toán: {order.vOrder_total}đ
+                Tổng thanh toán: {totalPrice+shippingFee}  đ
               </span>
             </List.Item>
           </List>
