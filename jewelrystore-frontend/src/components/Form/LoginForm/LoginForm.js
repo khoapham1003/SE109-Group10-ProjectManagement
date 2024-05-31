@@ -29,7 +29,7 @@ const Login = () => {
         },
         body: JSON.stringify(requestBody),
       });
-
+      console.log(requestBody);
       if (!response.ok) {
         const error = await response.text();
         if (error) {

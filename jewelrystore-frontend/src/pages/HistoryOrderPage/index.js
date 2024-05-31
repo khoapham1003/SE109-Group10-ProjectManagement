@@ -35,7 +35,7 @@ function HistoryOrderPage() {
     const fetchCheckOutData = async () => {
       try {
         const response = await fetch(
-          `https://localhost:7139/api/Order/${orderId}`,
+          `http://localhost:3001/order/get-all-order/${orderId}`,
           {
             method: "GET",
             headers: {
