@@ -90,9 +90,7 @@ const createOrder = (newOrder) => {
 const getAllOrderDetails = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const order = await Order.find({
-                user: id
-            }).sort({createdAt: -1, updatedAt: -1})
+            const order = await Order.find({user: id, isPaid: true}).sort({createdAt: -1, updatedAt: -1})
             if (order === null) {
                 resolve({
                     status: 'ERR',
