@@ -135,6 +135,8 @@ const createOrderFromCart = asyncHandler(async (req, res) => {
 
                     // Update product stock
                     product.countInStock -= selectedItem.amount;
+                    // Update product selled count
+                    product.selled = (product.selled || 0) + selectedItem.amount;
                     await product.save();
                 }
             } else {
