@@ -34,9 +34,8 @@ function ProfilePage() {
   const userId = getCookie("userid");
   const [userData, setUserData] = useState(null);
   const [editedData, setEditedData] = useState({
-    phonenumber: null,
-    dob: null,
-    sex: null,
+    sUser_phonenumber: null,
+    bUser_sex: null,
   });
   const [changePasswordData, setChangePasswordData] = useState({
     oldPassword: "",
@@ -64,11 +63,10 @@ function ProfilePage() {
         const data = await response.json();
         setUserData(data.data);
         console.log(data.data);
-        
+
         setEditedData({
-          sUser_phonenumber: data.sUser_phonenumber,
-          dtUser_dob: data.dtUser_dob,
-          bUser_sex: data.bUser_sex,
+          phonenumber: data.data.phone,
+          bUser_sex: data.data.gender,
         });
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -84,19 +82,19 @@ function ProfilePage() {
 
   const handleSaveClick = async () => {
     try {
+      
       const data = {
-        dtUser_dob: editedData.dtUser_dob,
-        gender: Boolean(editedData.bUser_sex),
+        gender: editedData.bUser_sex.toString(),
         phone: editedData.sUser_phonenumber,
       };
       console.log(data);
       const response = await fetch(
         `http://localhost:3001/user/update-user/${userId}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
+            token: `Bearer ${jwtToken}`,
           },
           body: JSON.stringify(data),
         }
@@ -113,13 +111,12 @@ function ProfilePage() {
       setUserData({
         ...userData,
         sUser_phonenumber: editedData.sUser_phonenumber,
-        dtUser_dob: editedData.dtUser_dob,
         bUser_sex: editedData.bUser_sex,
       });
       message.success(`Đổi thông tin thành công!`);
 
       setIsEditing(false);
-      window.location.reload();
+     // window.location.reload();
     } catch (error) {
       console.error("Error saving user data:", error);
     }
@@ -128,7 +125,6 @@ function ProfilePage() {
   const handleCancelClick = () => {
     setEditedData({
       sUser_phonenumber: userData?.sUser_phonenumber,
-      dtUser_dob: userData?.dtUser_dob,
       bUser_sex: userData?.bUser_sex,
     });
     setIsEditing(false);
@@ -163,7 +159,6 @@ function ProfilePage() {
     });
   };
 
-
   const handleModalCancel = () => {
     // Reset the change password form state and hide the modal
     setChangePasswordData({
@@ -175,21 +170,24 @@ function ProfilePage() {
 
   const handleChangePasswordSave = async () => {
     try {
-
       const data = {
-        oldPassword: changePasswordData.oldPassword,
+        currentPassword: changePasswordData.oldPassword,
         newPassword: changePasswordData.newPassword,
       };
       console.log(data);
 
-      const response = await fetch(`http://localhost:3001/user/change-password/${userId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          token: `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        `http://localhost:3001/user/change-password/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            token: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      console.log(response);
 
       if (!response.ok) {
         try {
@@ -219,18 +217,14 @@ function ProfilePage() {
 
   useEffect(() => {
     const fetchHistoryOrder = async () => {
-
-      const apiUrl = `http://localhost:3001/user/orders/${userId}`;
+      const apiUrl = `http://localhost:3001/order/get-all-order/${userId}`;
       try {
-        const response = await fetch(
-          apiUrl,
-          {
-            method: "GET",
-            headers: {
-              token: `Bearer ${jwtToken}`,
-            },
-          }
-        );
+        const response = await fetch(apiUrl, {
+          method: "GET",
+          headers: {
+            token: `Bearer ${jwtToken}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -238,7 +232,7 @@ function ProfilePage() {
 
         const data = await response.json();
         console.log(data);
-        setItems(data);
+        setItems(data.data);
         return data;
       } catch (error) {
         console.error("Error fetching product data:", error);
@@ -265,24 +259,8 @@ function ProfilePage() {
         <Col className="profilepage_container">
           {userData && (
             <Descriptions className="description" column={1}>
-              <Descriptions.Item label="Họ">
+              <Descriptions.Item label="Họ và Tên">
                 {userData.name}
-              </Descriptions.Item>
-              <Descriptions.Item label="Tên">
-                {userData.name}
-              </Descriptions.Item>
-              <Descriptions.Item label="Ngày sinh">
-                {isEditing ? (
-                  <Input
-                    placeholder="dd/mm/yyyy"
-                    value={editedData.birthday}
-                    onChange={(e) =>
-                      handleInputChange("dtUser_dob", e.target.value)
-                    }
-                  />
-                ) : (
-                  userData.dtUser_dob || "N/A"
-                )}
               </Descriptions.Item>
               <Descriptions.Item label="Giới tính">
                 {isEditing ? (
@@ -429,7 +407,7 @@ function ProfilePage() {
                 <Descriptions.Item label="Ngày mua">
                   {item.createdAt}
                 </Descriptions.Item>
-                 <Descriptions.Item label="Tổng đơn hàng">
+                <Descriptions.Item label="Tổng đơn hàng">
                   {item.totalPrice}
                 </Descriptions.Item>
               </Descriptions>
