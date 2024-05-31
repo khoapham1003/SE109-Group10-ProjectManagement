@@ -273,43 +273,6 @@ function CheckoutPage() {
             </Card>
           ))}
         </div>
-        <div className="cop_voucher">
-          <List>
-            <List.Item>
-              <h2>Voucher</h2>
-            </List.Item>
-            <List.Item>
-              <Input
-                value={promotionalCode}
-                onChange={(e) => {
-                  setPromotionalCode(e.target.value);
-                  setisCheck(false);
-                }}
-                disabled={isApply}
-              />
-            </List.Item>
-            <List.Item
-              style={{ display: "flex", justifyContent: "flex-start" }}
-            >
-              <Button
-                className="cop_button1"
-                onClick={handleCheckVoucher}
-                disabled={isApply}
-                style={{ width: "120px" }}
-              >
-                Check Code
-              </Button>
-              <Button
-                className="cop_button2"
-                onClick={handleApplyVoucher}
-                disabled={isApply}
-                style={{ width: "120px" }}
-              >
-                Áp dụng
-              </Button>
-            </List.Item>
-          </List>
-        </div>
         <div className="cop_checkout_info">
           <List>
             <List.Item>
