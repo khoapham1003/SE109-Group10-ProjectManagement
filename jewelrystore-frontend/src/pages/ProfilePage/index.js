@@ -234,9 +234,11 @@ function ProfilePage() {
 
   useEffect(() => {
     const fetchHistoryOrder = async () => {
+
+      const apiUrl = `http://localhost:3001/user/orders/${userId}`;
       try {
         const response = await fetch(
-          `http://localhost:3001/user/orders/${userId}`,
+          apiUrl,
           {
             method: "GET",
             headers: {
@@ -263,7 +265,7 @@ function ProfilePage() {
   const handleCardClick = (item) => {
     console.log("Card clicked:", item);
     localStorage.setItem("orderhistoryId", item.iOrder_id);
-    //navigate(`/history`);
+    navigate(`/history`);
   };
 
   return (
