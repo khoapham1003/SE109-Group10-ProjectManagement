@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchProductData } from "../../components/Data/api";
 import { floatButtonPrefixCls } from "antd/es/float-button/FloatButton";
 import "./../styleMainPage.css";
+import background_log from "../../assets/images/background_log.jpg"
 
 const { Meta } = Card;
 
@@ -54,7 +55,7 @@ function MainPage() {
 
   return (
     <div>
-      {/* <div
+      <div
         className="content"
         style={{
           backgroundImage: `url(${background_log})`,
@@ -63,7 +64,7 @@ function MainPage() {
           backgroundRepeat: "no-repeat",
           height: "400px",
         }}
-      ></div> */}
+      ></div>
       <h3 class="title-comm">
         <span class="title-holder">DANH MỤC SẢN PHẨM</span>
       </h3>

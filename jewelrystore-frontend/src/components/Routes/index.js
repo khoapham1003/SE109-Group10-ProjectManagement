@@ -17,6 +17,7 @@ import CheckoutPage from "../../pages/CheckoutPage";
 import FilteredPage from "../../pages/Category";
 import SearchPage from "../../pages/SearchPage";
 import HistoryOrderPage from "../../pages/HistoryOrderPage";
+import AdminPage from "../../pages/AdminPage";
 
 function DefineLayout() {
   const isUserAuthenticated = () => {
@@ -26,8 +27,8 @@ function DefineLayout() {
     if (accessToken) {
       try {
         const decodedToken = JSON.parse(atob(accessToken.split(".")[1]));
-          console.log("decodedToken", decodedToken);
-          document.cookie = `userid=${decodedToken.id}; path=/`;
+        console.log("decodedToken", decodedToken);
+        document.cookie = `userid=${decodedToken.id}; path=/`;
         if (decodedToken && decodedToken.exp) {
           const currentTimeInSeconds = Math.floor(Date.now() / 1000);
           if (decodedToken.exp < currentTimeInSeconds) {
@@ -91,12 +92,14 @@ const publicRoutes = [
     component: SearchPage,
     layout: DefineLayout(),
   },
+];
+//PrivateRoutes
+const privateRoutes = [
   { path: "/profile_page", component: ProfilePage, layout: DefineLayout() },
   { path: "/checkout", component: CheckoutPage, layout: DefineLayout() },
   { path: "/cart", component: CartPage },
   { path: "/history", component: HistoryOrderPage, layout: DefineLayout() },
+  { path: "/admin", component: AdminPage, layout: DefineLayout() },
 ];
-//PrivateRoutes
-const privateRoutes = [];
 
 export { publicRoutes, privateRoutes };

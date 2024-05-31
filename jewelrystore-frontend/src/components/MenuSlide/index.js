@@ -24,7 +24,6 @@ const MenuSlide = ({ onMenuSelect }) => {
       }
       const data = await response.json();
       setMenuData(data.data);
-      console.log("menuslide:", menuData);
     } catch (error) {
       console.error("Error fetching menu data:", error);
     }
@@ -39,18 +38,19 @@ const MenuSlide = ({ onMenuSelect }) => {
     setSelectedKeys(pathName);
   }, [location.pathname]);
 
+  console.log("menuslide:", menuData);
+
+  const handleMenuClick = (itemName) => {
+    console.log("Selected item:", itemName);
+    onMenuSelect(itemName);
+  };
+
   const renderMenuItems = (menuItems) => {
-    return menuItems.map((item) => {
-      if (item.lCate_childs && item.lCate_childs.length > 0) {
-        return (
-          <SubMenu key={item.iCate_id} title={item.sCate_name}>
-            {renderMenuItems(item.lCate_childs)}
-          </SubMenu>
-        );
-      } else {
-        return <Menu.Item key={item.iCate_id}>{item.sCate_name}</Menu.Item>;
-      }
-    });
+    return menuItems.map((itemName) => (
+      <Menu.Item key={itemName} onClick={() => handleMenuClick(itemName)}>
+        {itemName}
+      </Menu.Item>
+    ));
   };
 
   return (
@@ -67,7 +67,6 @@ const MenuSlide = ({ onMenuSelect }) => {
             borderRight: "none",
             fontSize: "10px"
           }}
-          onClick={({ key }) => onMenuSelect(key)}
         >
           {renderMenuItems(menuData)}
         </Menu>
