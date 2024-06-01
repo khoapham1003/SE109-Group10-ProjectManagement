@@ -14,6 +14,7 @@ import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { IoMdAdd } from "react-icons/io";
+import "./../../../stylePage.css";
 
 const { Option } = Select;
 
@@ -206,14 +207,16 @@ function ProductAdmin() {
 
   return (
     <div>
-      <Button onClick={showAddForm}>
+      <Button onClick={showAddForm} className="profilepage_button admin_button">
         <IoMdAdd />
+        <em />
+        <strong> ADD PRODUCT</strong>
       </Button>
       <div className="cop_cartlist_header">
-        <Col md={2} offset={1}>
+        <Col md={3} offset={1}>
           <h3>Sản phẩm</h3>
         </Col>
-        <Col md={8}></Col>
+        <Col md={4}></Col>
         <Col md={3} offset={1}>
           <h3>Đơn giá</h3>
         </Col>
@@ -222,9 +225,6 @@ function ProductAdmin() {
         </Col>
         <Col md={3} offset={1}>
           <h3>Loại</h3>
-        </Col>
-        <Col md={3} offset={1}>
-          <h3>Mô tả</h3>
         </Col>
       </div>
       <div className="cop_cartlist_item">
@@ -241,7 +241,7 @@ function ProductAdmin() {
                   src={item.image}
                 />
               </Col>
-              <Col md={8}>
+              <Col md={4} offset={1}>
                 <span>{item.name}</span>
               </Col>
               <Col md={3} offset={1}>
@@ -252,9 +252,6 @@ function ProductAdmin() {
               </Col>
               <Col md={3} offset={1}>
                 <span className="cop_item_price">{item.type}</span>
-              </Col>
-              <Col md={3} offset={1}>
-                <span>{item.description}</span>
               </Col>
               <Col md={3} offset={1}>
                 <span>

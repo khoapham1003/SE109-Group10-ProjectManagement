@@ -92,8 +92,6 @@ function UserAdmin() {
     removeProduct(UserId);
   };
 
-  
- 
   const showConfirm = (userId) => {
     confirm({
       title: "Bạn có chắc chắn muốn xóa user này không?",
@@ -117,7 +115,7 @@ function UserAdmin() {
         <Col md={2} offset={1}>
           <h3>Tên</h3>
         </Col>
-        <Col md={8}></Col>
+        <Col md={2}></Col>
         <Col md={3} offset={1}>
           <h3>Số Điện Thoại</h3>
         </Col>
@@ -132,16 +130,16 @@ function UserAdmin() {
         {items.map((item) => (
           <Card className="cop_item_cart" key={item._id}>
             <Row align="middle">
-              <Col md={8}>
+              <Col md={5} offset={1}>
                 <span>{item.name}</span>
               </Col>
-              <Col md={3} offset={1}>
+              <Col md={3}>
                 <span>{item.phone}</span>
               </Col>
               <Col md={3} offset={1}>
                 <span className="cop_item_price">{item.email}</span>
               </Col>
-              <Col md={3} offset={1}>
+              <Col md={6} offset={1}>
                 <span>{item.address}</span>
               </Col>
               <Col md={3} offset={1}>
