@@ -452,3 +452,55 @@
   border-width: 1.5px;
   border-radius: 2px !important;
 }
+/* new */
+.admin_button {
+  width: 250px;
+  height: 50px;
+}
+.order-history {
+  display: flex;
+  flex-direction: column-reverse;
+}
+.order-history .ant-descriptions-item {
+  padding-bottom: 0px !important;
+}
+.admin-info {
+  display: flex;
+  flex-direction: row;
+  margin: 0px 200px;
+  gap: 100px;
+}
+.admin-info span {
+  font-size: 30px;
+  color: #ffffff;
+  font-weight: 400;
+}
+.admin-info h3 {
+  margin-bottom: 0px !important;
+}
+.admin-info-totalSale,
+.admin-info-totalOrder,
+.admin-info-totalProduct {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  color: white;
+  border-style: solid;
+  border-color: black;
+  border-width: 2px;
+}
+.admin-info-totalSale {
+  background-color: #1cb09a;
+}
+.admin-info-totalOrder {
+  background-color: #d9544f;
+}
+.admin-info-totalProduct {
+  background-color: #20a8d8;
+}
+.ant-tabs-nav {
+  margin: 3vh 10vw 2vh;
+}

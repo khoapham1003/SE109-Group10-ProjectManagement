@@ -397,14 +397,27 @@ function OrderAdmin() {
         )}
       </div>
       <div>
-        <h3>Tổng giá trị bán ra: {total}</h3>
-        <h3>Tổng đơn hàng: {items.length}</h3>
-        <h3>Tổng số lượng sản phẩm đã bán ra: {totalAmount}</h3>
+         <div className="admin-info">
+        <div className="admin-info-totalSale">
+          <h3>Tổng giá trị bán ra: </h3>
+          <span>{total}</span>
+        </div>
+        <div className="admin-info-totalOrder">
+          <h3>Tổng đơn hàng: </h3>
+          <span>{items.length}</span>
+        </div>
+        <div className="admin-info-totalProduct">
+          <h3>Tổng số lượng sản phẩm bán ra: </h3>
+          <span>{totalAmount}</span>
+        </div>
       </div>
       <Row>
-        <h2 className="detail_h2">GIAO DỊCH</h2>
+        <h2 className="detail_h2">GIAO DỊCH GẦN ĐÂY</h2>
       </Row>
-      <div style={{ display: "flex", flexDirection: "column-reverse" }}>
+      <div
+        className="order-history"
+        style={{ display: "flex", flexDirection: "column-reverse" }}
+      >
         {items.map((item) => (
           <Card
             className="order_history_cart"
