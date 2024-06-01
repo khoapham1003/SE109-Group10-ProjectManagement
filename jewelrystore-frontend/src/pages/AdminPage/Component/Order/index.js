@@ -396,8 +396,7 @@ function OrderAdmin() {
           </div>
         )}
       </div>
-      <div>
-         <div className="admin-info">
+      <div className="admin-info">
         <div className="admin-info-totalSale">
           <h3>Tổng giá trị bán ra: </h3>
           <span>{total}</span>
@@ -414,6 +413,7 @@ function OrderAdmin() {
       <Row>
         <h2 className="detail_h2">GIAO DỊCH GẦN ĐÂY</h2>
       </Row>
+
       <div
         className="order-history"
         style={{ display: "flex", flexDirection: "column-reverse" }}
