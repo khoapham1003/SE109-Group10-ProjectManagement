@@ -260,45 +260,92 @@ function OrderAdmin() {
 
   return (
     <div>
-      <div>
-        <h2>Biểu Đồ Tổng Giá Trị Bán Ra</h2>
-        <Space direction="vertical" size={12}>
-          <DatePicker
-            placeholder="Chọn ngày bắt đầu"
-            onChange={handleStartDateChange}
-            format="YYYY-MM-DD"
-          />
-          <DatePicker
-            placeholder="Chọn ngày kết thúc"
-            onChange={handleEndDateChange}
-            format="YYYY-MM-DD"
-          />
-        </Space>
-        <Space>
-          <Button onClick={() => handleChartTypeChange("daily")}>
-            Theo Ngày
-          </Button>
-          <Button onClick={() => handleChartTypeChange("monthly")}>
-            Theo Tháng
-          </Button>
-          <Button onClick={() => handleChartTypeChange("yearly")}>
-            Theo Năm
-          </Button>
-        </Space>
-        <Space>
-          <Button onClick={() => handleDataTypeChange("totalPrice")}>
-            Tổng Giá Trị
-          </Button>
-          <Button onClick={() => handleDataTypeChange("orderCount")}>
-            Số Lượng Đơn Hàng
-          </Button>
-          <Button onClick={() => handleDataTypeChange("productCount")}>
-            Số Lượng Sản Phẩm
-          </Button>
-        </Space>
+      {/* 3 tab thông tin */}
+      <Row>
+        <h2 className="detail_h2">Thông Số Bán Hàng</h2>
+      </Row>
+      <div className="admin-info">
+        <div className="admin-info-totalSale">
+          <h3>Tổng giá trị bán ra: </h3>
+          <span>{total}</span>
+        </div>
+        <div className="admin-info-totalOrder">
+          <h3>Tổng đơn hàng: </h3>
+          <span>{items.length}</span>
+        </div>
+        <div className="admin-info-totalProduct">
+          <h3>Tổng số lượng sản phẩm bán ra: </h3>
+          <span>{totalAmount}</span>
+        </div>
+      </div>
+      <Row>
+        <h2 className="detail_h2">Biểu Đồ Tổng Giá Trị Bán Ra</h2>
+      </Row>
+      <div className="chart-part">
+        <div className="type-of-chart">
+          <Space className="chart-by-day" size={12}>
+            <h2>Lọc theo ngày</h2>
+            <Button
+              className="chart-button"
+              onClick={() => handleChartTypeChange("daily")}
+            >
+              Theo Ngày
+            </Button>
+            <Space className="chart-datepicker">
+              <DatePicker
+                placeholder="Chọn ngày bắt đầu"
+                onChange={handleStartDateChange}
+                format="YYYY-MM-DD"
+              />
+              <DatePicker
+                placeholder="Chọn ngày kết thúc"
+                onChange={handleEndDateChange}
+                format="YYYY-MM-DD"
+              />
+            </Space>
+            <h2>Chọn giá trị để lọc theo ngày</h2>
+            <Space className="chart-by-value">
+              <Button
+                className="chart-button"
+                onClick={() => handleDataTypeChange("totalPrice")}
+              >
+                Tổng Giá Trị
+              </Button>
+              <Button
+                className="chart-button"
+                onClick={() => handleDataTypeChange("orderCount")}
+              >
+                Số Lượng Đơn Hàng
+              </Button>
+              <Button
+                className="chart-button"
+                onClick={() => handleDataTypeChange("productCount")}
+              >
+                Số Lượng Sản Phẩm
+              </Button>
+            </Space>
+          </Space>
+
+          <Space className="chart-by-monthyear">
+            <h2>Hoặc lựa chọn lọc theo Tháng/Năm</h2>
+            <Button
+              className="chart-button"
+              onClick={() => handleChartTypeChange("monthly")}
+            >
+              Theo Tháng
+            </Button>
+            <Button
+              className="chart-button"
+              onClick={() => handleChartTypeChange("yearly")}
+            >
+              Theo Năm
+            </Button>
+          </Space>
+        </div>
+
         {chartType === "daily" && chartData.daily && (
-          <div>
-            <h3>Theo Ngày</h3>
+          <div className="chart-container">
+            <h2>Theo Ngày</h2>
             <Bar
               data={{
                 labels: chartData.daily.labels,
@@ -330,8 +377,8 @@ function OrderAdmin() {
           </div>
         )}
         {chartType === "monthly" && chartData.monthly && (
-          <div>
-            <h3>Theo Tháng</h3>
+          <div className="chart-container">
+            <h2>Theo Tháng</h2>
             <Bar
               data={{
                 labels: chartData.monthly.labels,
@@ -363,8 +410,8 @@ function OrderAdmin() {
           </div>
         )}
         {chartType === "yearly" && chartData.yearly && (
-          <div>
-            <h3>Theo Năm</h3>
+          <div className="chart-container">
+            <h2>Theo Năm</h2>
             <Bar
               data={{
                 labels: chartData.yearly.labels,
@@ -396,22 +443,9 @@ function OrderAdmin() {
           </div>
         )}
       </div>
-      <div className="admin-info">
-        <div className="admin-info-totalSale">
-          <h3>Tổng giá trị bán ra: </h3>
-          <span>{total}</span>
-        </div>
-        <div className="admin-info-totalOrder">
-          <h3>Tổng đơn hàng: </h3>
-          <span>{items.length}</span>
-        </div>
-        <div className="admin-info-totalProduct">
-          <h3>Tổng số lượng sản phẩm bán ra: </h3>
-          <span>{totalAmount}</span>
-        </div>
-      </div>
+
       <Row>
-        <h2 className="detail_h2">GIAO DỊCH GẦN ĐÂY</h2>
+        <h2 className="detail_h2">Giao Dịch Gần Đây</h2>
       </Row>
 
       <div
