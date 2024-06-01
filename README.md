@@ -18,14 +18,13 @@ Jewelry Store System
 
 **How to use**: 
 1. Clone project:
-git clone https://github.com/khoapham1003/SE109-ProjectManagement.git
-2. cd SE109-ProjectManagement
+git clone https://github.com/khoapham1003/SE358-ProjectManagement.git
+2. cd SE358-ProjectManagement
 3. Install neccessary packages and run:
   3.1 Backend
    cd jewelrystore-backend
 npm install
 npm start
-Open localhost:3011 on web browser
   3.2 Frontend 
 cd jewelrystore-frontend
 npm install
