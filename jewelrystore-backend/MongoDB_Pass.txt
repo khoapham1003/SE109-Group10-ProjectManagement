@@ -1,6 +1,0 @@
-Username:
-21521349
-Password:
-Qy6778y7OIWWO6gc
-Link access:
-mongodb+srv://21521349:Qy6778y7OIWWO6gc@jewelrystoredb.wt63nwk.mongodb.net/
